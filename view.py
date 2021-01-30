@@ -21,8 +21,31 @@ def get_date():
 
 
 
-def get_turn(self):
-    turn = input()
+def get_turn():
+    turn = 4
+    return
 
 
-get_date()
+def get_round():
+    return
+
+
+def get_player():
+    return
+
+
+def get_description(self):
+    description = input('description du tournoi: ')
+    if len(description) > 20:
+        return self.get_description
+    return description
+
+
+# Participants
+def get_p_name(self):
+    name = input('Nom du joueur? ')
+    if len(name) > 20:
+        print('Nom du tournoi trop long')
+        return self.get_p_name()
+    return name
+
