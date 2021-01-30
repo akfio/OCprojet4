@@ -49,3 +49,37 @@ def get_p_name(self):
         return self.get_p_name()
     return name
 
+
+def get_pname():
+    try:
+        pname = input('Prenom du joueur?' )
+        if len(pname) > 20:
+            print('Prenom trop long')
+            return get_pname()
+        return pname
+    except ValueError:
+        return get_pname()
+
+
+def get_birth_date():
+    try:
+        birth_date = input('Date de naissance: ' 'JJ/MM/AAAA: ')
+        if len(birth_date) != 10:
+            return get_birth_date()
+        return birth_date
+    except ValueError:
+        return get_birth_date()
+
+
+def get_sexe():
+    try:
+        sexe = input('sexe du joueur: ''H/F')
+        if len(sexe) != 1:
+            return get_sexe()
+        return sexe
+    except ValueError:
+        return get_sexe()
+
+
+def get_classement():
+    try:
