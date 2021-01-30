@@ -10,4 +10,10 @@ class Tournoi:
         self.description = description
 
 
-pass
+class Participants:
+    def __init__(self, nom, prenom, age, sexe, classement):
+        self.nom = nom
+        self.prenom = prenom
+        self.age = age
+        self.sexe = sexe
+        self.classement = classement
