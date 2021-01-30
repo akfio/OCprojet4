@@ -83,3 +83,7 @@ def get_sexe():
 
 def get_classement():
     try:
+        classement = int(input('Classement général du joueur: '))
+        return classement
+    except ValueError:
+        return get_classement()
