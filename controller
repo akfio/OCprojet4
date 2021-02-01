@@ -1,4 +1,5 @@
-import main
+from main import Tournoi
+from main import Participants
 import view
 
 #Tournoi
