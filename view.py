@@ -84,6 +84,9 @@ def get_sexe():
 def get_classement():
     try:
         classement = int(input('Classement général du joueur: '))
+        if classement < 0:
+            print('Chiffre négatif')
+            return get_classement()
         return classement
     except ValueError:
         return get_classement()
