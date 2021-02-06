@@ -86,6 +86,11 @@ def get_description(self):
     return description
 
 
+def get_tournoi():
+    all = [get_name(), get_place(), get_date(), get_turn(), get_type(), get_description()]
+    return all
+
+
 # Participants
 def get_p_name(self):
     try:
@@ -139,4 +144,9 @@ def get_classement():
             return get_classement()
         return classement
     except ValueError:
-        return get_classement()
+        return get_classement() 
+
+
+def get_participant():
+    player = [get_p_name(), get_pname(), get_birth_date(), get_sexe(), get_classement()]
+    return player
