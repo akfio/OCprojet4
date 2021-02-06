@@ -2,4 +2,11 @@ from main import Tournoi
 from main import Participants
 import view
 
-#Tournoi
+class Controller:
+    def create_tournoi(self):
+
+
+
+    return view.get_tournoi()
+
+create_tournoi()
