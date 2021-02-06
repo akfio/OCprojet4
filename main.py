@@ -28,3 +28,19 @@ class Participants:
 p = Participants("test", "Tes", "tre", "fr", "yth")
 for a, b in p.__dict__:
     print(b)
+
+
+class Rounds:
+    def __init__(self):
+        self.lst_match = []
+    
+    
+    def Add_Match(self):
+        self.lst_match = 
+        
+        
+class Match:
+    def __init__(self, IDBlanc, IDNoir, Result):
+        self.P_blanc = IDBlanc
+        self.P_noir = IDNoir
+        self.resultat = Result
