@@ -23,3 +23,7 @@ class Participants:
 
     def participants(self):
         return self.nom, self.prenom, self.age, self.sexe, self.classement
+
+    p = Participants("test", "Tes", "tre", "fr", "yth")
+for a, b in p.__dict__:
+    print(b)
