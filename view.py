@@ -37,7 +37,7 @@ class View:
             return self.get_date()
 
 
-    def get_turn():
+    def get_turn(self):
         turn = 4
         print('nombre de tours par défault: 4 ')
         more = input('Entrer une nouvelle valeur ou appuyer sur "ENTREE" ')
@@ -47,12 +47,12 @@ class View:
         return turn
 
 
-    def get_player():
+    def get_player(self):
         #aller chercher des joueurs dans une liste
         return
 
 
-    def get_type():
+    def get_type(self):
         try:
             print('Taper 1 pour Bullet')
             print('Taper 2 pour Blitz')
@@ -71,90 +71,79 @@ class View:
                 print('Partie Rapide')
                 return time
             if type != [1, 2, 3]:
-                return get_type()
+                return self.get_type()
         except ValueError:
-            return get_type()
+            return self.get_type()
 
 
-    def get_description():
+    def get_description(self):
         try:
             description = input('description du tournoi: ')
             if len(description) > 20:
-                return get_description
+                return self.get_description()
             return description
         except ValueError:
-            return get_description()
-
-
-    def get_tournoi():
-        all = [get_name(), get_place(), get_date(), get_turn(), get_type(), get_description()]
-        return all
+            return self.get_description()
 
 
     # Participants
-    def get_p_name():
+    def get_p_name(self):
         try:
             name = input('Nom du joueur? ')
             if len(name) > 20:
                 print('Nom trop long')
-                return get_p_name()
+                return self.get_p_name()
             return name
         except ValueError:
-            return get_p_name()
+            return self.get_p_name()
 
 
-    def get_pname():
+    def get_pname(self):
         try:
             pname = input('Prenom du joueur? ')
             if len(pname) > 20:
                 print('Prenom trop long')
-                return get_pname()
+                return self.get_pname()
             return pname
         except ValueError:
-            return get_pname()
+            return self.get_pname()
 
 
-    def get_birth_date():
+    def get_birth_date(self):
         try:
             birth_date = input('Date de naissance: ' 'JJ/MM/AAAA: ')
             if len(birth_date) != 10:
-                return get_birth_date()
+                return self.get_birth_date()
             return birth_date
         except ValueError:
-            return get_birth_date()
+            return self.get_birth_date()
 
 
-    def get_sexe():
+    def get_sexe(self):
         try:
             sexe = input('sexe du joueur: ''H/F ')
             if len(sexe) != 1:
-                return get_sexe()
+                return self.get_sexe()
             return sexe
         except ValueError:
-            return get_sexe()
+            return self.get_sexe()
 
 
-    def get_classement():
+    def get_classement(self):
         try:
             classement = int(input('Classement général du joueur: '))
             if classement < 0:
                 print('Chiffre négatif')
-                return get_classement()
+                return self.get_classement()
             return classement
         except ValueError:
             print('Entrer une valeur numérique')
-            return get_classement()
+            return self.get_classement()
 
-
-    def get_participant():
-        p = []
-        player = [get_p_name(), get_pname(), get_birth_date(), get_sexe(), get_classement()]
-        p.append(player)
-        return player
 
     # Rounds
 
-    def get_lst_match():
+    def get_lst_match(self):
         lst = []
         lst.append(get_paire())
 
@@ -164,7 +153,7 @@ class View:
 
 
     def get_nb_pts():
-        c = [ (ID joueur, points)]
+        c = [(ID joueur, points)]
      #joueur1 = point actuel + result
 
 
@@ -178,4 +167,13 @@ class View:
     def get_new_paire():
         sorted(c, key=itemgetter(1), reverse=True)
 
+# MENU
 
+    def choose_menu(self):
+        print("""
+            Menu du Tournoi: 
+              1 : Création de tournoi
+              2 : Création de participants
+              """)
+        a = input("choisir une action: ")
+        return a

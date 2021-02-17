@@ -1,3 +1,4 @@
+
 class Tournoi:
     def __init__(self, name, place, date, turn, round, player, type, description):
         self.nom = name
@@ -23,12 +24,12 @@ class Rounds:
     def __init__(self):
         self.lst_match = []
 
-    def Add_Match(self, lst_matchs):
+    def add_match(self, lst_matchs):
         self.lst_match.append(lst_matchs)
 
 
 class Matches:
-    def __init__(self, IDBlanc, IDNoir, Result):
-        self.P_blanc = ID_Blanc
-        self.p_noir = ID_Noir
-        self.resultat = Result
+    def __init__(self, id_blanc, id_noir, result):
+        self.P_blanc = id_blanc
+        self.p_noir = id_noir
+        self.resultat = result
