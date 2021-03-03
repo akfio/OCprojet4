@@ -39,15 +39,16 @@ lst_match = [
 
 
 def get_results(lst_match):
-    for _ in lst_match:
-        results = view.get_result()
-        if results == 1:
-            lst_match.result = "Victoire blanc"
-        elif results == 2:
-            lst_match.result = "Victoire noir"
-        elif results == 0:
-            lst_match.result = "Match nul"
-        return lst_match
+    tot = len(lst_match)
+    for i in range(tot):
+        result = view.get_result()
+        if int(result) == 1:
+            lst_match[i].result = "Victoire blanc"
+        elif int(result) == 2:
+            lst_match[i].result = "Victoire noir"
+        elif int(result) == 0:
+            lst_match[i].result = "Match nul"
+    return lst_match
 
 
 class Points:
