@@ -179,3 +179,4 @@ def get_result():
         print("Valeur incorrecte")
         return get_result()
     return result
+

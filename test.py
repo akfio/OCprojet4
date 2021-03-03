@@ -74,7 +74,6 @@ print(add_point(match))
 
 
 
-
 """
 b = view.get_result()
 if b == 1:

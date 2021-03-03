@@ -41,3 +41,4 @@ class Matches:
 
     def __repr__(self):
         return '{} VS {} : {}'.format(self.id_blanc, self.id_noir, self.result)
+
