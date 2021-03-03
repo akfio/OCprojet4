@@ -33,7 +33,11 @@ class Rounds:
 
 
 class Matches:
+
     def __init__(self, id_blanc, id_noir, result):
         self.id_blanc = id_blanc
         self.id_noir = id_noir
         self.result = result
+
+    def __repr__(self):
+        return '{} VS {} : {}'.format(self.id_blanc, self.id_noir, self.result)

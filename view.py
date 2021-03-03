@@ -172,4 +172,10 @@ def get_result():
                    Tapez 2 pour une victoire du joueur noir
                    
                    """)
+    if result > str(2):
+        print("Valeur incorrecte")
+        return get_result()
+    elif result < str(0):
+        print("Valeur incorrecte")
+        return get_result()
     return result

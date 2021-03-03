@@ -15,17 +15,17 @@ player = [
 ]
 
 
-def get_round_result():
+def get_round():
     a = itemgetter(4)
     b = sorted(player, key=a)
     c = len(b) // 2
     first_half = b[:c]
     second_half = b[c:]
     first_round = [
-        (first_half[0].id, second_half[0].id),
-        (first_half[1].id, second_half[1].id),
-        (first_half[2].id, second_half[2].id),
-        (first_half[3].id, second_half[3].id)
+        Matches(first_half[0].id, second_half[0].id, None),
+        Matches(first_half[1].id, second_half[1].id, None),
+        Matches(first_half[2].id, second_half[2].id, None),
+        Matches(first_half[3].id, second_half[3].id, None)
     ]
     return first_round
 
@@ -39,47 +39,52 @@ lst_match = [
 
 
 def get_results(lst_match):
-    for _ in lst_match:
-        results = view.get_result()
-        if results == 1:
-            lst_match.result = "Victoire blanc"
-        elif results == 2:
-            lst_match.result = "Victoire noir"
-        elif results == 0:
-            lst_match.result = "Match nul"
-        return lst_match
+    tot = len(lst_match)
+    for i in range(tot):
+        result = view.get_result()
+        if int(result) == 1:
+            lst_match[i].result = "Victoire blanc"
+        elif int(result) == 2:
+            lst_match[i].result = "Victoire noir"
+        elif int(result) == 0:
+            lst_match[i].result = ""
+    return lst_match
 
 
-class Points:
-    pts = 0
+match = Matches(player[5].id, player[6].id, "Match nul")
 
 
-def add_points():
-    n = Points()
-    b = view.get_result()
-    if b == 1:
-        n.pts += 1
-    elif b == 2:
-        n.pts += 1
-    elif b == 0:
-        n.pts += 0.5
-        n.pts += 0.5
-    return b
+def add_point(match):
+    rs = None
+    if match.result == "Victoire blanc":
+        rs = match.id_blanc
+    elif match.result == "Victoire noir":
+        rs = match.id_noir
+    all = len(player)
+    for i in range(all):
+        if player[i].id == rs:
+            player[i].pts += 1
+    else:
+        player[match.id_blanc].pts += 0.5
+        player[match.id_noir].pts += 0.5
+    return player[6].pts
+
+print(add_point(match))
 
 
 
 
 
-class Static:
-    variable = 4
-
-
-a = Static()
-# print(a.variable) 4
-a.variable = 5
-# print(a.variable) 5
-# print(Static.variable) 4
 """
+b = view.get_result()
+if b == 1:
+    n.pts += 1
+elif b == 2:
+    n.pts += 1
+elif b == 0:
+    n.pts += 0.5
+    n.pts += 0.5
+return b
 
 
 
@@ -135,3 +140,11 @@ def ze_result():
     lst.append(match4)
     return lst    
 """
+class Static:
+    variable = 4
+
+a = Static()
+# print(a.variable) 4
+a.variable = 5
+# print(a.variable) 5
+# print(Static.variable) 4
