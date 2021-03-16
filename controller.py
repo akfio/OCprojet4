@@ -65,6 +65,40 @@ class Controller:
         self.matches = Matches(id_blanc, id_noir, result)
 
 
+    def get_results(lst_match):
+        tot = len(lst_match)
+        for i in range(tot):
+            result = view.get_result()
+            if int(result) == 1:
+                lst_match[i].result = "Victoire blanc"
+            elif int(result) == 2:
+                lst_match[i].result = "Victoire noir"
+            elif int(result) == 0:
+                lst_match[i].result = "Match nul"
+        return lst_match
+
+
+    def rst_pts():
+        a = get_results(lst_match)
+        b = len(a)
+        print(b)
+        for j in range(b):
+            rs = None
+            if a[j].result == "Victoire blanc":
+                rs = a[j].id_blanc
+            elif a[j].result == "Victoire noir":
+                rs = a[j].id_noir
+            all = len(player)
+            for i in range(all):
+                if player[i].id == rs:
+                    player[i].pts += 1
+            if a[j].result == "Match nul":
+                player[a[j].id_blanc].pts += 0.5
+                player[a[j].id_noir].pts += 0.5
+        return player[0].pts, player[1].pts, player[2].pts, player[3].pts, player[4].pts, player[5].pts, player[6].pts, \
+               player[7].pts
+
+
 """"
     def get_round():
         # return la liste des match

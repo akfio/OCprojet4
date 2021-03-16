@@ -8,6 +8,7 @@ class Tournoi:
         self.player = player
         self.type = type
         self.description = description
+        self.hist = []
 
 
 class Participants:
@@ -25,6 +26,7 @@ class Participants:
 
 
 class Rounds:
+
     def __init__(self):
         self.lst_match = []
 
@@ -34,11 +36,13 @@ class Rounds:
 
 class Matches:
 
-    def __init__(self, id_blanc, id_noir, result):
+    def __init__(self, nom_blanc, id_blanc,  nom_noir, id_noir, result):
+        self.nom_blanc = nom_blanc
         self.id_blanc = id_blanc
+        self.nom_noir = nom_noir
         self.id_noir = id_noir
         self.result = result
 
     def __repr__(self):
-        return '{} VS {} : {}'.format(self.id_blanc, self.id_noir, self.result)
+        return '{} ({}) VS {} ({}) : {}'.format(self.nom_blanc, self.id_blanc, self.nom_noir, self.id_noir, self.result)
 
