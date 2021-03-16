@@ -1,5 +1,7 @@
 from datetime import date
 from operator import attrgetter, itemgetter
+import random
+
 
 class View:
 
@@ -14,7 +16,6 @@ class View:
         except ValueError:
             return self.get_name()
 
-
     def get_place(self):
         try:
             place = input('Lieu du tournoi? ')
@@ -23,7 +24,6 @@ class View:
             return place
         except ValueError:
             return self.get_place()
-
 
     def get_date(self):
         try:
@@ -36,7 +36,6 @@ class View:
             print('Utiliser un nombre compris entre 1 et 12 pour le mois et entre 1 et 31 pour le jour')
             return self.get_date()
 
-
     def get_turn(self):
         turn = 4
         print('nombre de tours par défault: 4 ')
@@ -46,11 +45,9 @@ class View:
         print('nombre de tours = ' + str(turn))
         return turn
 
-
     def get_player(self):
-        #aller chercher des joueurs dans une liste
+        # aller chercher des joueurs dans une liste
         return
-
 
     def get_type(self):
         try:
@@ -75,7 +72,6 @@ class View:
         except ValueError:
             return self.get_type()
 
-
     def get_description(self):
         try:
             description = input('description du tournoi: ')
@@ -84,7 +80,6 @@ class View:
             return description
         except ValueError:
             return self.get_description()
-
 
     # Participants
     def get_p_name(self):
@@ -97,7 +92,6 @@ class View:
         except ValueError:
             return self.get_p_name()
 
-
     def get_pname(self):
         try:
             pname = input('Prenom du joueur? ')
@@ -108,7 +102,6 @@ class View:
         except ValueError:
             return self.get_pname()
 
-
     def get_birth_date(self):
         try:
             birth_date = input('Date de naissance: ' 'JJ/MM/AAAA: ')
@@ -118,7 +111,6 @@ class View:
         except ValueError:
             return self.get_birth_date()
 
-
     def get_sexe(self):
         try:
             sexe = input('sexe du joueur: ''H/F ')
@@ -127,7 +119,6 @@ class View:
             return sexe
         except ValueError:
             return self.get_sexe()
-
 
     def get_classement(self):
         try:
@@ -140,34 +131,29 @@ class View:
             print('Entrer une valeur numérique')
             return self.get_classement()
 
-
     # Rounds
 
     def get_lst_match(self):
-        lst = []
-        lst.append(get_paire())
+        return
 
-    def get_result():
-        result = input("joueur blanc: ")
-        result2 = input("joueur noir: ")
-
-
-    def get_nb_pts():
-        c = [(ID joueur, points)]
-     #joueur1 = point actuel + result
-
+    # def get_nb_pts():
+    # c = [(ID joueur, points)]
+    # joueur1 = point actuel + result
 
     # Matches
+    def get_result(self):
+        try:
+            result = input("Tapez 1 pour une victoire du joueur blanc"
+                           "Tapez 0 pour un match nul"
+                           "Tapez 2 pour une victoire du joueur noir")
+            return result
+        except ValueError:
+            return self.get_result()
 
-    def get_paire():
-        sorted(player, key=itemgetter(4))
-        for player in range(4):
+    # def get_new_paire():
+    # sorted(c, key=itemgetter(1), reverse=True)
 
-
-    def get_new_paire():
-        sorted(c, key=itemgetter(1), reverse=True)
-
-# MENU
+    # MENU
 
     def choose_menu(self):
         print("""
@@ -177,3 +163,20 @@ class View:
               """)
         a = input("choisir une action: ")
         return a
+
+
+def get_result():
+    result = input("""
+                   Tapez 1 pour une victoire du joueur blanc"
+                   Tapez 0 pour un match nul"
+                   Tapez 2 pour une victoire du joueur noir
+                   
+                   """)
+    if result > str(2):
+        print("Valeur incorrecte")
+        return get_result()
+    elif result < str(0):
+        print("Valeur incorrecte")
+        return get_result()
+    return result
+
