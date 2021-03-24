@@ -27,8 +27,9 @@ class Participants:
 
 class Rounds:
 
-    def __init__(self):
+    def __init__(self, round_nbr=0):
         self.lst_match = []
+        self.round_nbr = round_nbr
 
     def add_match(self, lst_matchs):
         self.lst_match.append(lst_matchs)
