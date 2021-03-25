@@ -136,22 +136,17 @@ class View:
     def get_lst_match(self):
         return
 
-    # def get_nb_pts():
-    # c = [(ID joueur, points)]
-    # joueur1 = point actuel + result
+
 
     # Matches
     def get_result(self):
         try:
             result = input("Tapez 1 pour une victoire du joueur blanc"
                            "Tapez 0 pour un match nul"
-                           "Tapez 2 pour une victoire du joueur noir")
+                           "Tapez 2 pour une victoire du joueur noirS")
             return result
         except ValueError:
             return self.get_result()
-
-    # def get_new_paire():
-    # sorted(c, key=itemgetter(1), reverse=True)
 
     # MENU
 
@@ -167,8 +162,8 @@ class View:
 
 def get_result():
     result = input("""
-                   Tapez 1 pour une victoire du joueur blanc"
-                   Tapez 0 pour un match nul"
+                   Tapez 1 pour une victoire du joueur blanc
+                   Tapez 0 pour un match nul
                    Tapez 2 pour une victoire du joueur noir
                    
                    """)
@@ -179,4 +174,21 @@ def get_result():
         print("Valeur incorrecte")
         return get_result()
     return result
+
+
+def add_results(lst_match):
+    tot = len(lst_match)
+    for i in range(tot):
+        print(lst_match[i])
+        result = get_result()
+        if int(result) == 1:
+            lst_match[i].result = "Victoire" + " " + lst_match[i].nom_blanc
+        elif int(result) == 2:
+            lst_match[i].result = "Victoire" + " " + lst_match[i].nom_noir
+        elif int(result) == 0:
+            lst_match[i].result = "Match nul"
+        print(lst_match[i])
+    return lst_match
+
+
 

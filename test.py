@@ -35,23 +35,25 @@ def get_round():
     return first_round
 
 
+
 def get_results(lst_match):
     tot = len(lst_match)
     for i in range(tot):
+        print(lst_match[i])
         result = view.get_result()
         if int(result) == 1:
-            lst_match[i].result = "Victoire blanc"
+            lst_match[i].result = "Victoire" + " " + lst_match[i].nom_blanc
         elif int(result) == 2:
-            lst_match[i].result = "Victoire noir"
+            lst_match[i].result = "Victoire" + " " + lst_match[i].nom_noir
         elif int(result) == 0:
             lst_match[i].result = "Match nul"
+        print(lst_match[i])
     return lst_match
 
 
 def rst_pts():
     a = get_results(hist)
     b = len(a)
-    print(b)
     for j in range(b):
         rs = None
         if a[j].result == "Victoire blanc":
@@ -68,6 +70,7 @@ def rst_pts():
     return player[0].pts, player[1].pts, player[2].pts, player[3].pts, player[4].pts, player[5].pts, player[6].pts, \
            player[7].pts
 
+print(rst_pts())
 
 def new_round():
     b = sorted(player, key=lambda a: (a.pts, a.classement))

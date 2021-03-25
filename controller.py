@@ -73,7 +73,6 @@ class Controller:
     def rst_pts():
         a = get_results(hist)
         b = len(a)
-        print(b)
         for j in range(b):
             rs = None
             if a[j].result == "Victoire blanc":
