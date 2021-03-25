@@ -13,6 +13,7 @@ class Controller:
         self.tournoi = None
         self.particpants = []
         self.matches = None
+        self.hist = []
 
     def create_tournament(self):
         name = self.view.get_name()
@@ -25,6 +26,7 @@ class Controller:
         description = self.view.get_description()
         # Enregistrer en base
         self.tournoi = Tournoi(name, place, date, turn, None, player, type, description)
+        self.hist = self.tournoi.hist
 
     def create_player(self):
         nom = self.view.get_p_name()
@@ -75,7 +77,7 @@ class Controller:
         b = len(a)
         for j in range(b):
             rs = None
-            if a[j].result == "Victoire blanc":
+            if a[j].result == "Victoire blanc" + a[j].nom_blanc:
                 rs = a[j].id_blanc
             elif a[j].result == "Victoire noir":
                 rs = a[j].id_noir

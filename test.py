@@ -70,7 +70,6 @@ def rst_pts():
     return player[0].pts, player[1].pts, player[2].pts, player[3].pts, player[4].pts, player[5].pts, player[6].pts, \
            player[7].pts
 
-print(rst_pts())
 
 def new_round():
     b = sorted(player, key=lambda a: (a.pts, a.classement))
@@ -84,16 +83,17 @@ def new_round():
     for match in hist:
         for m in match:
             if int(m.id_blanc) == b[0].id and int(m.id_noir) == b[1].id:
-                tmp_id = round[0].id_noir
-                tmp_nom = round[0].nom_noir
-                round[0].id_noir = round[1].id_blanc
-                round[0].nom_noir = round[1].nom_blanc
-                round[1].id_blanc = tmp_id
-                round[1].nom_blanc = tmp_nom
+                tmp_id = round[1].id_noir
+                tmp_nom = round[1].nom_noir
+                round[1].id_noir = round[2].id_blanc
+                round[1].nom_noir = round[2].nom_blanc
+                round[2].id_blanc = tmp_id
+                round[2].nom_blanc = tmp_nom
             else:
                 return round
     return round
 
+print(new_round())
 
 def fonctionnement():
     get_round()

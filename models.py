@@ -1,4 +1,5 @@
 class Tournoi:
+
     def __init__(self, name, place, date, turn, round, player, type, description):
         self.nom = name
         self.lieu = place
@@ -12,6 +13,9 @@ class Tournoi:
 
 
 class Participants:
+    def __str__(self) -> str:
+        return self.nom + self.prenom
+
     id = 0
 
     def __init__(self, nom, prenom, age, sexe, classement):
