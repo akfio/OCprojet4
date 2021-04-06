@@ -2,19 +2,49 @@ from tinydb import TinyDB, Query, where
 from controller import Controller
 from view import View
 from models import Participants
+from models import Matches
 
 db = TinyDB('participants.json')
 
-str = db.search(where('Name') == 'Nom6')
-p = Participants(str[0]["Name"], str[0]["First Name"], str[0]["Birthdate"], str[0]["Genre"], str[0]["Ranking"])
+
+#str = db.search(where('Name') == 'Alice')
+#p = Participants(str[0]["Name"], str[0]["First Name"], str[0]["Birthdate"], str[0]["Genre"], str[0]["Ranking"])
+
 
 table_parcipant = db.table("Participants")
-table_parcipant.insert({'Name': 'Alice' , 'Age' : 19})
-table_parcipant.insert({'Name': 'Jean' , 'Age' : 19})
-table_parcipant.insert({'Name': 'Jacques' , 'Age' : 19})
+
+
+def get_round():
+    b = sorted(db, key=lambda a: a.get["Name", 0])
+    c = len(b) // 2
+    first_half = b[:c]
+    second_half = b[c:]
+    first_round = [
+        Matches(first_half[0].nom, first_half[0].id, second_half[0].nom, second_half[0].id, None),
+        Matches(first_half[1].nom, first_half[1].id, second_half[1].nom, second_half[1].id, None),
+        Matches(first_half[2].nom, first_half[2].id, second_half[2].nom, second_half[2].id, None),
+        Matches(first_half[3].nom, first_half[3].id, second_half[3].nom, second_half[3].id, None)
+    ]
+    return first_round
+
+
+
+
+
+
+"""
+
+
+table_parcipant.insert({'Name': 'Alice', 'Age': 26})
+table_parcipant.insert({'Name': 'Jean', 'Age': 2})
+table_parcipant.insert({'Name': 'Jacques', 'Age': 9})
 for data in table_parcipant.all():
     print(data)
-"""
+
+
+
+
+
 def get_p_name():
     try:
         name = input('Nom du joueur? ')

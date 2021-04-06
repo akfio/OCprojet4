@@ -39,7 +39,7 @@ class View:
     def get_turn(self):
         turn = 4
         print('nombre de tours par défault: 4 ')
-        more = input('Entrer une nouvelle valeur ou appuyer sur "ENTREE" ')
+        more = input('Entrer une nouvelle valeur ou appuyer sur "ENTER" ')
         if len(more) > 0:
             turn = more
         print('nombre de tours = ' + str(turn))
@@ -135,8 +135,6 @@ class View:
 
     def get_lst_match(self):
         return
-
-
 
     # Matches
     def get_result(self):

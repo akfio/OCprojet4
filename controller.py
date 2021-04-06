@@ -3,8 +3,7 @@ from models import Participants
 from models import Rounds
 from models import Matches
 from view import View
-import random
-from operator import itemgetter
+from tinydb import TinyDB, Query, where
 
 
 class Controller:
@@ -14,6 +13,7 @@ class Controller:
         self.particpants = []
         self.matches = None
         self.hist = []
+        self.db = TinyDB('Tournoi.json')
 
     def create_tournament(self):
         name = self.view.get_name()
@@ -24,7 +24,8 @@ class Controller:
         player = self.view.get_player()
         type = self.view.get_type()
         description = self.view.get_description()
-        # Enregistrer en base
+        table_tournoi = self.db.table("Tournament")
+        table_tournoi.insert({'Name': name, 'Place': place, 'Date': date, 'Players': player, 'Type': type, 'Description': description})
         self.tournoi = Tournoi(name, place, date, turn, None, player, type, description)
         self.hist = self.tournoi.hist
 
@@ -35,6 +36,8 @@ class Controller:
         sexe = self.view.get_sexe()
         classement = self.view.get_classement()
         self.particpants.append(Participants(nom, prenom, birth, sexe, classement))
+        table_players = self.db.table("Players")
+        table_players.insert({'Name': nom, 'First_name': prenom, 'Birth_date': birth, 'Sexe': sexe, 'Rank': classement})
 
     def choose_action(self):
         while 1:
@@ -63,7 +66,7 @@ class Controller:
     def get_results(lst_match):
         tot = len(lst_match)
         for i in range(tot):
-            result = view.get_result()
+            result = View.get_result()
             if int(result) == 1:
                 lst_match[i].result = "Victoire blanc"
             elif int(result) == 2:
@@ -113,22 +116,3 @@ class Controller:
                     return round
         return round
 
-
-""""
-    def get_round():
-        # return la liste des match
-        return
-
-     def add_result():
-        return view.get_result()
-
-    def get_next_round():
-        # La nouvelle liste de match
-        return
-
-    def get_final_rank():
-        return
-
-
-    def get_rapport():
-"""

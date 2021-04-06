@@ -1,10 +1,17 @@
 from operator import itemgetter
-import view
+from view import View
 from models import Matches, Participants, Tournoi
 from controller import Controller
-from tinydb import TinyDB, Query
+from tinydb import TinyDB, Query, where
 
 db = TinyDB('db.json')
+r = db.table("Players")
+
+for players in range(8):
+    str = r.get(doc_id= 5)
+    print(str)
+    p = Participants(str["Name"], str["First_name"], str["Birth_date"], str["Sexe"], str["Rank"])
+    print(p)
 
 player = [
     Participants("Brady", "Tom", "03/06/1960", "H", 2),
@@ -20,6 +27,17 @@ player = [
 hist = []
 
 
+def create_player():
+    view = View()
+    nom = view.get_p_name()
+    prenom = view.get_pname()
+    birth = view.get_birth_date()
+    sexe = view.get_sexe()
+    classement = view.get_classement()
+    table_players = db.table("Players")
+    table_players.insert({'Name': nom, 'First_name': prenom, 'Birth_date': birth, 'Sexe': sexe, 'Rank': classement})
+
+
 def get_round():
     b = sorted(player, key=lambda a: a.classement)
     c = len(b) // 2
@@ -33,7 +51,6 @@ def get_round():
     ]
     hist.append(first_round)
     return first_round
-
 
 
 def get_results(lst_match):
@@ -93,7 +110,6 @@ def new_round():
                 return round
     return round
 
-print(new_round())
 
 def fonctionnement():
     get_round()

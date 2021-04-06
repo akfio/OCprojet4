@@ -14,7 +14,7 @@ class Tournoi:
 
 class Participants:
     def __str__(self) -> str:
-        return self.nom + self.prenom
+        return self.nom + self.prenom + self.age + self.sexe + self.classement
 
     id = 0
 
