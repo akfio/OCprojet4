@@ -10,7 +10,7 @@ class Controller:
     def __init__(self):
         self.view = View()
         self.tournoi = None
-        self.particpants = []
+        self.participants = []
         self.matches = None
         self.hist = []
         self.db = TinyDB('Tournoi.json')
@@ -35,7 +35,7 @@ class Controller:
         birth = self.view.get_birth_date()
         sexe = self.view.get_sexe()
         classement = self.view.get_classement()
-        self.particpants.append(Participants(nom, prenom, birth, sexe, classement))
+        self.participants.append(Participants(nom, prenom, birth, sexe, classement))
         table_players = self.db.table("Players")
         table_players.insert({'Name': nom, 'First_name': prenom, 'Birth_date': birth, 'Sexe': sexe, 'Rank': classement})
 

@@ -46,8 +46,9 @@ class View:
         return turn
 
     def get_player(self):
-        # aller chercher des joueurs dans une liste
-        return
+        name = input('Nom du joueur? : ')
+        return name
+
 
     def get_type(self):
         try:
@@ -138,13 +139,19 @@ class View:
 
     # Matches
     def get_result(self):
-        try:
-            result = input("Tapez 1 pour une victoire du joueur blanc"
-                           "Tapez 0 pour un match nul"
-                           "Tapez 2 pour une victoire du joueur noirS")
-            return result
-        except ValueError:
+        result = input("""
+                       Tapez 1 pour une victoire du joueur blanc
+                       Tapez 0 pour un match nul
+                       Tapez 2 pour une victoire du joueur noir
+
+                       """)
+        if result > str(2):
+            print("Valeur incorrecte")
             return self.get_result()
+        elif result < str(0):
+            print("Valeur incorrecte")
+            return self.get_result()
+        return result
 
     # MENU
 
@@ -158,20 +165,7 @@ class View:
         return a
 
 
-def get_result():
-    result = input("""
-                   Tapez 1 pour une victoire du joueur blanc
-                   Tapez 0 pour un match nul
-                   Tapez 2 pour une victoire du joueur noir
-                   
-                   """)
-    if result > str(2):
-        print("Valeur incorrecte")
-        return get_result()
-    elif result < str(0):
-        print("Valeur incorrecte")
-        return get_result()
-    return result
+
 
 
 def add_results(lst_match):
