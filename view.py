@@ -1,10 +1,10 @@
 from datetime import date
-from operator import attrgetter, itemgetter
-import random
+from tinydb import TinyDB, Query
+from models import Matches, Participants
+
 
 
 class View:
-
     # Tournoi
     def get_name(self):
         try:
@@ -25,17 +25,6 @@ class View:
         except ValueError:
             return self.get_place()
 
-    def get_date(self):
-        try:
-            a = input("Année : ")
-            b = input("Mois : ")
-            c = input("Jour : ")
-            d = date(int(a), int(b), int(c))
-            print(d)
-        except ValueError:
-            print('Utiliser un nombre compris entre 1 et 12 pour le mois et entre 1 et 31 pour le jour')
-            return self.get_date()
-
     def get_turn(self):
         turn = 4
         print('nombre de tours par défault: 4 ')
@@ -45,10 +34,21 @@ class View:
         print('nombre de tours = ' + str(turn))
         return turn
 
-    def get_player(self):
-        name = input('Nom du joueur? : ')
-        return name
-
+    def add_player(self):
+        db = TinyDB('db.json')
+        controller = Controller()
+        for pyr in range(8):
+            name = input('Nom du joueur? : ')
+            r = db.table("Players")
+            player = Query()
+            a = r.get(player.Name == name)
+            if a is None:
+                print('Joueur non disponible dans la base de donnée')
+                return self.add_player()
+            else:
+                p = Participants(a["Name"], a["First_name"], a["Birth_date"], a["Sexe"], a["Rank"])
+                controller.participants.append(p)
+        return controller.participants
 
     def get_type(self):
         try:
@@ -83,25 +83,25 @@ class View:
             return self.get_description()
 
     # Participants
-    def get_p_name(self):
+    def get_pyr_name(self):
         try:
             name = input('Nom du joueur? ')
             if len(name) > 20:
                 print('Nom trop long')
-                return self.get_p_name()
+                return self.get_pyr_name()
             return name
         except ValueError:
-            return self.get_p_name()
+            return self.get_pyr_name()
 
-    def get_pname(self):
+    def get_frt_name(self):
         try:
             pname = input('Prenom du joueur? ')
             if len(pname) > 20:
                 print('Prenom trop long')
-                return self.get_pname()
+                return self.get_frt_name()
             return pname
         except ValueError:
-            return self.get_pname()
+            return self.get_frt_name()
 
     def get_birth_date(self):
         try:
@@ -121,16 +121,16 @@ class View:
         except ValueError:
             return self.get_sexe()
 
-    def get_classement(self):
+    def get_rank(self):
         try:
-            classement = int(input('Classement général du joueur: '))
-            if classement < 0:
+            rank = int(input('Classement général du joueur: '))
+            if rank < 0:
                 print('Chiffre négatif')
-                return self.get_classement()
-            return classement
+                return self.get_rank()
+            return rank
         except ValueError:
             print('Entrer une valeur numérique')
-            return self.get_classement()
+            return self.get_rank()
 
     # Rounds
 
@@ -140,9 +140,9 @@ class View:
     # Matches
     def get_result(self):
         result = input("""
-                       Tapez 1 pour une victoire du joueur blanc
+                       Tapez 1 pour une victoire du joueur 1
                        Tapez 0 pour un match nul
-                       Tapez 2 pour une victoire du joueur noir
+                       Tapez 2 pour une victoire du joueur 2
 
                        """)
         if result > str(2):
@@ -163,24 +163,6 @@ class View:
               """)
         a = input("choisir une action: ")
         return a
-
-
-
-
-
-def add_results(lst_match):
-    tot = len(lst_match)
-    for i in range(tot):
-        print(lst_match[i])
-        result = get_result()
-        if int(result) == 1:
-            lst_match[i].result = "Victoire" + " " + lst_match[i].nom_blanc
-        elif int(result) == 2:
-            lst_match[i].result = "Victoire" + " " + lst_match[i].nom_noir
-        elif int(result) == 0:
-            lst_match[i].result = "Match nul"
-        print(lst_match[i])
-    return lst_match
 
 
 

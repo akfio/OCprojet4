@@ -1,52 +1,54 @@
 
 from view import View
 from models import Matches, Participants, Tournoi
-from controller import Controller
 from tinydb import TinyDB, Query, where
+from datetime import datetime
 
 db = TinyDB('db.json')
 
 
-player = [
-
+players = [
+Participants("Brady", "Tom", "03/06/1960", "H", 2),
+    Participants("James", "LeBron", "03/06/1960", "H", 4),
+    Participants("Westbrook", "Russell", "03/06/1960", "H", 7),
+    Participants("Federer", "Roger", "03/06/1960", "H", 8),
+    Participants("Nadal", "Rapha", "03/06/1960", "H", 5),
+    Participants("Henry", "Titi", "03/06/1960", "H", 1),
+    Participants("Gignac", "André", "03/06/1960", "H", 6),
+    Participants("Obama", "Presi", "03/06/1960", "H", 3)
 ]
-hist = []
 
-"""""
-view = View()
-for pyr in range(view.get_turn()*2):
-    name = input('Nom du joueur? : ')
-    r = db.table("Players")
-    Joueur = Query()
-    a = r.get(Joueur.Name == name)
-    p = Participants(a["Name"], a["First_name"], a["Birth_date"], a["Sexe"], a["Rank"])
-    player.append(p)
-"""
+hist = []
 
 
 def add_player():
     for pyr in range(8):
         name = input('Nom du joueur? : ')
         r = db.table("Players")
-        Joueur = Query()
-        a = r.get(Joueur.Name == name)
-        p = Participants(a["Name"], a["First_name"], a["Birth_date"], a["Sexe"], a["Rank"])
-        player.append(p)
+        player = Query()
+        a = r.get(player.Name == name)
+        if a is None:
+            print('Joueur non disponible dans la base de donnée')
+            return add_player()
+        else:
+            p = Participants(a["Name"], a["First_name"], a["Birth_date"], a["Sexe"], a["Rank"])
+            player.append(p)
+    return players
 
 
 def create_player():
     view = View()
-    nom = view.get_p_name()
-    prenom = view.get_pname()
+    nom = view.get_pyr_name()
+    prenom = view.get_frt_name()
     birth = view.get_birth_date()
     sexe = view.get_sexe()
-    classement = view.get_classement()
+    classement = view.get_rank()
     table_players = db.table("Players")
     table_players.insert({'Name': nom, 'First_name': prenom, 'Birth_date': birth, 'Sexe': sexe, 'Rank': classement})
 
 
 def get_round():
-    b = sorted(player, key=lambda a: a.classement)
+    b = sorted(players, key=lambda a: a.classement)
     c = len(b) // 2
     first_half = b[:c]
     second_half = b[c:]
@@ -64,6 +66,8 @@ def get_results(lst_match):
     view = View()
     for lst in lst_match:
         for match in lst:
+            print("")
+            print(match)
             result = view.get_result()
             if int(result) == 1:
                 match.result = "Victoire" + " " + match.nom_blanc
@@ -80,30 +84,30 @@ def rst_pts():
     for lst in result:
         for match in lst:
             rs = None
-            if match.result == "Victoire blanc":
+            if match.result == "Victoire" + " " + match.nom_blanc:
                 rs = match.id_blanc
-            elif match.result == "Victoire noir":
+            elif match.result == "Victoire" + " " + match.nom_noir:
                 rs = match.id_noir
-            all = len(player)
+            all = len(players)
             for i in range(all):
-                if player[i].id == rs:
-                    player[i].pts += 1
+                if players[i].id == rs:
+                    players[i].pts += 1
             if match.result == "Match nul":
-                player[match.id_blanc].pts += 0.5
-                player[match.id_noir].pts += 0.5
-    return player[0].pts, player[1].pts, player[2].pts, player[3].pts, player[4].pts, player[5].pts, player[6].pts, \
-           player[7].pts
+                players[match.id_blanc].pts += 0.5
+                players[match.id_noir].pts += 0.5
+    return players[0].pts, players[1].pts, players[2].pts, players[3].pts, players[4].pts, players[5].pts, players[6].pts, \
+           players[7].pts
 
 
 def new_round():
-    b = sorted(player, key=lambda a: (a.pts, a.classement))
+    b = sorted(players, key=lambda a: (a.pts, a.classement))
     round = [
         Matches(b[0].nom, b[0].id, b[1].nom, b[1].id, None),
         Matches(b[2].nom, b[2].id, b[3].nom, b[3].id, None),
         Matches(b[4].nom, b[4].id, b[5].nom, b[5].id, None),
         Matches(b[6].nom, b[6].id, b[7].nom, b[7].id, None)
     ]
-    hist = []
+    hist.clear()
     hist.append(round)
     for match in hist:
         for m in match:
@@ -120,20 +124,23 @@ def new_round():
 
 
 def fonctionnement():
-    add_player()
     get_round()
     rst_pts()
     print(hist) #VIDER LA LISTE
-    new_round()
+    print(new_round())
+    print("ok")
     print(hist)
-    rst_pts()
+    #rst_pts()
+    #print(hist)
 
-fonctionnement()
 
 
+"""
 joueur introuvable
 save en db les rounds
-"""
+
+
+
 def add_point(match):
     rs = None
     if match.result == "Victoire blanc":
