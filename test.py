@@ -1,10 +1,26 @@
-
 from view import View
-from models import Matches, Participants, Tournoi
+from models import Matches, Participants, Tournoi, Rounds
 from tinydb import TinyDB, Query, where
 from datetime import datetime
 
-db = TinyDB('db.json')
+db = TinyDB('test.json')
+
+
+def create_tournament():
+    view = View()
+    name = view.get_name()
+    place = view.get_place()
+    date = str(datetime.now().date())
+    turn = view.get_turn()
+    round = None
+    player = add_player()
+    type = view.get_type()
+    description = view.get_description()
+    table_tournoi = db.table("Tournament")
+    table_tournoi.insert(
+        {'Name': name, 'Place': place, 'Date': date, 'Players': player, 'Round': round, 'Type': type, 'Description': description})
+    tournoi = Tournoi(name, place, date, turn, round, player, type, description)
+    return tournoi
 
 
 players = [
@@ -32,8 +48,8 @@ def add_player():
             return add_player()
         else:
             p = Participants(a["Name"], a["First_name"], a["Birth_date"], a["Sexe"], a["Rank"])
-            player.append(p)
-    return players
+            players.append(p)
+    return str(players)
 
 
 def create_player():
@@ -95,7 +111,8 @@ def rst_pts():
             if match.result == "Match nul":
                 players[match.id_blanc].pts += 0.5
                 players[match.id_noir].pts += 0.5
-    return players[0].pts, players[1].pts, players[2].pts, players[3].pts, players[4].pts, players[5].pts, players[6].pts, \
+    return players[0].pts, players[1].pts, players[2].pts, players[3].pts, players[4].pts, players[5].pts, players[
+        6].pts, \
            players[7].pts
 
 
@@ -123,18 +140,19 @@ def new_round():
     return round
 
 
+#def lst():
+    #Rounds(1, lst de match avec resultat, debut, fin)
+
+def update_rounds():
+    table_tournoi = db.table("Tournament")
+
+
+
+
 def fonctionnement():
-    get_round()
-    rst_pts()
-    print(hist) #VIDER LA LISTE
-    print(new_round())
-    print("ok")
-    print(hist)
-    #rst_pts()
-    #print(hist)
+   create_tournament()
 
-
-
+fonctionnement()
 """
 joueur introuvable
 save en db les rounds

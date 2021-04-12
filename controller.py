@@ -22,14 +22,14 @@ class Controller:
         date = datetime.now().date()
         turn = self.view.get_turn()
         # round
-        player = self.view.add_player()
+        player = self.add_player()
         type = self.view.get_type()
         description = self.view.get_description()
         table_tournoi = self.db.table("Tournament")
         table_tournoi.insert(
             {'Name': name, 'Place': place, 'Date': date, 'Players': player, 'Type': type, 'Description': description})
         self.tournoi = Tournoi(name, place, date, turn, None, player, type, description)
-        self.hist = self.tournoi.hist
+        # self.hist = self.tournoi.hist
 
     def create_player(self):
         nom = self.view.get_pyr_name()
@@ -37,9 +37,23 @@ class Controller:
         birth = self.view.get_birth_date()
         sexe = self.view.get_sexe()
         classement = self.view.get_rank()
-        self.participants.append(Participants(nom, prenom, birth, sexe, classement))
+        # self.participants.append(Participants(nom, prenom, birth, sexe, classement))
         table_players = self.db.table("Players")
         table_players.insert({'Name': nom, 'First_name': prenom, 'Birth_date': birth, 'Sexe': sexe, 'Rank': classement})
+
+    def add_player(self):
+        for pyr in range(8):
+            name = input('Nom du joueur? : ')
+            r = self.db.table("Players")
+            player = Query()
+            a = r.get(player.Name == name)
+            if a is None:
+                print('Joueur non disponible dans la base de donnée')
+                return self.add_player()
+            else:
+                p = Participants(a["Name"], a["First_name"], a["Birth_date"], a["Sexe"], a["Rank"])
+                self.participants.append(p)
+        return self.participants
 
     def choose_action(self):
         while 1:
@@ -108,7 +122,7 @@ class Controller:
             Matches(b[4].nom, b[4].id, b[5].nom, b[5].id, None),
             Matches(b[6].nom, b[6].id, b[7].nom, b[7].id, None)
         ]
-        self.hist = []
+        self.hist.clear()
         self.hist.append(round)
         for match in self.hist:
             for m in match:
@@ -124,10 +138,11 @@ class Controller:
         return round
 
     def fonct(self):
-        self.choose_action()
         self.get_round()
         self.get_results()
         self.rst_pts()
         self.new_round()
 
-    fonct()
+
+a = Controller()
+a.fonct()

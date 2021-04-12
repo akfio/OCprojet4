@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import datetime
 from tinydb import TinyDB, Query
 from models import Matches, Participants
 
@@ -34,21 +34,6 @@ class View:
         print('nombre de tours = ' + str(turn))
         return turn
 
-    def add_player(self):
-        db = TinyDB('db.json')
-        controller = Controller()
-        for pyr in range(8):
-            name = input('Nom du joueur? : ')
-            r = db.table("Players")
-            player = Query()
-            a = r.get(player.Name == name)
-            if a is None:
-                print('Joueur non disponible dans la base de donnée')
-                return self.add_player()
-            else:
-                p = Participants(a["Name"], a["First_name"], a["Birth_date"], a["Sexe"], a["Rank"])
-                controller.participants.append(p)
-        return controller.participants
 
     def get_type(self):
         try:
@@ -105,11 +90,14 @@ class View:
 
     def get_birth_date(self):
         try:
-            birth_date = input('Date de naissance: ' 'JJ/MM/AAAA: ')
-            if len(birth_date) != 10:
-                return self.get_birth_date()
-            return birth_date
+            a = input('année de naissance : ')
+            b = input('mois de naissance : ')
+            c = input('jour de naissance : ')
+            d = a + '-' + b + '-' + c
+            e = datetime.strptime(d, '%Y-%m-%d').date()
+            return str(e)
         except ValueError:
+            print("Format incorrect, dois être AAAA-MM-JJ")
             return self.get_birth_date()
 
     def get_sexe(self):
