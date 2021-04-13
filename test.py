@@ -1,6 +1,7 @@
 from view import View
 from models import Matches, Participants, Tournoi, Rounds
 from tinydb import TinyDB, Query, where
+from tinydb.operations import add
 from datetime import datetime
 
 db = TinyDB('test.json')
@@ -23,16 +24,7 @@ def create_tournament():
     return tournoi
 
 
-players = [
-Participants("Brady", "Tom", "03/06/1960", "H", 2),
-    Participants("James", "LeBron", "03/06/1960", "H", 4),
-    Participants("Westbrook", "Russell", "03/06/1960", "H", 7),
-    Participants("Federer", "Roger", "03/06/1960", "H", 8),
-    Participants("Nadal", "Rapha", "03/06/1960", "H", 5),
-    Participants("Henry", "Titi", "03/06/1960", "H", 1),
-    Participants("Gignac", "André", "03/06/1960", "H", 6),
-    Participants("Obama", "Presi", "03/06/1960", "H", 3)
-]
+players = []
 
 hist = []
 
@@ -75,6 +67,9 @@ def get_round():
         Matches(first_half[3].nom, first_half[3].id, second_half[3].nom, second_half[3].id, None)
     ]
     hist.append(first_round)
+    table_tournoi = db.table("Tournament")
+    round = Rounds()
+    table_tournoi.update({"Round": {"Name": "Round" + str(round.round_nbr), "Start": str(datetime.now())}})
     return first_round
 
 
@@ -97,6 +92,9 @@ def get_results(lst_match):
 
 def rst_pts():
     result = get_results(hist)
+    round = Query()
+    table_tournoi = db.table("Tournament")
+    table_tournoi.update({"Round": {"Games": str(result), "End": str(datetime.now())}})
     for lst in result:
         for match in lst:
             rs = None
@@ -144,15 +142,25 @@ def new_round():
     #Rounds(1, lst de match avec resultat, debut, fin)
 
 def update_rounds():
+    round = Query()
     table_tournoi = db.table("Tournament")
+    table_tournoi.update(add("Round", round.round ==)
+    #table_tournoi.update("Name": "Round 1", "Age": 19}})
 
+update_rounds()
 
 
 
 def fonctionnement():
-   create_tournament()
+    db.drop_table("Tournament")
+    create_tournament()
+    get_round()
+    rst_pts()
+    new_round()
+    rst_pts()
 
-fonctionnement()
+
+
 """
 joueur introuvable
 save en db les rounds
