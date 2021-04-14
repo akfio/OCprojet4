@@ -1,7 +1,7 @@
 from view import View
 from models import Matches, Participants, Tournoi, Rounds
 from tinydb import TinyDB, Query, where
-from tinydb.operations import add
+from tinydb.operations import add, set
 from datetime import datetime
 
 db = TinyDB('test.json')
@@ -25,8 +25,8 @@ def create_tournament():
 
 
 players = []
-
 hist = []
+round = []
 
 
 def add_player():
@@ -69,7 +69,8 @@ def get_round():
     hist.append(first_round)
     table_tournoi = db.table("Tournament")
     round = Rounds()
-    table_tournoi.update({"Round": {"Name": "Round" + str(round.round_nbr), "Start": str(datetime.now())}})
+    table_tournoi.update({"Round": {"Name": "Round" + str(round.round_nbr), "Start": str(datetime.now()),
+                                    "Games": str(first_round), "End": None }})
     return first_round
 
 
@@ -92,9 +93,10 @@ def get_results(lst_match):
 
 def rst_pts():
     result = get_results(hist)
-    round = Query()
+    round = Rounds()
     table_tournoi = db.table("Tournament")
-    table_tournoi.update({"Round": {"Games": str(result), "End": str(datetime.now())}})
+    table_tournoi.update({"Round": {"Name": "Round" + str(round.round_nbr),
+                                    "Games": str(result), "End": str(datetime.now()) }})
     for lst in result:
         for match in lst:
             rs = None
@@ -135,6 +137,10 @@ def new_round():
                 round[2].nom_blanc = tmp_nom
             else:
                 return round
+    table_tournoi = db.table("Tournament")
+    round = Rounds()
+    table_tournoi.update({"Round": {"Name": "Round" + str(round.round_nbr), "Start": str(datetime.now()),
+                                    "Games": str(round), "End": None}})
     return round
 
 
@@ -142,12 +148,11 @@ def new_round():
     #Rounds(1, lst de match avec resultat, debut, fin)
 
 def update_rounds():
-    round = Query()
+    round = Rounds()
     table_tournoi = db.table("Tournament")
-    table_tournoi.update(add("Round", round.round ==)
-    #table_tournoi.update("Name": "Round 1", "Age": 19}})
-
-update_rounds()
+    table_tournoi.update({"Round": {"Name": "Round " + str(round.round_nbr)}})
+    table_tournoi.update({"Round": {"Start": str(datetime.now())}})
+    table_tournoi.insert({"Round": {"end": str(datetime.now())}})
 
 
 
@@ -156,8 +161,60 @@ def fonctionnement():
     create_tournament()
     get_round()
     rst_pts()
+#RECHARGER TOUTES LES DONN2ES/ RECALCULER TT LES POINTS DES JOUEURS DANS UN TOURNOI
     new_round()
     rst_pts()
+    new_round()
+    rst_pts()
+
+
+
+def rapport_acteurs():
+    table_players = db.table("Players")
+    a = input("""
+                Rapport des acteurs par ordre:
+                
+              1 : Alphabetique 
+              2 : Classement
+              
+                """)
+    if int(a) == 2:
+        return sorted(table_players, key=lambda a: a['Rank'])
+    elif int(a) == 1:
+        return sorted(table_players, key=lambda a: a['Name'])
+    else:
+        print("Veuillez saisir 1 ou 2")
+        return rapport_acteurs()
+
+
+def change_rank():
+    view = View()
+    name = input('Nom du joueur? : ')
+    r = db.table("Players")
+    player = Query()
+    a = r.get(player.Name == name)
+    if a is None:
+        print("Joueur non présent dans la base de donnée")
+        return change_rank()
+    elif r.count(player.Name == name) > 1:
+        first_name = input('Prénom du joueur? : ')
+        b = r.get((player.Name == name) & (player.First_name == first_name))
+        if b is None:
+            print("Prénom non présent dans la base de donnée")
+            return change_rank()
+        print("Classement actuel: ")
+        print(b['Rank'])
+        new_rank = view.get_rank()
+        b["Rank"] = new_rank
+        r.update(b)
+        return b['Rank']
+    else:
+        print("Classement actuel: ")
+        print(a['Rank'])
+        new_rank = view.get_rank()
+        a["Rank"] = new_rank
+        r.update(a)
+        return a['Rank']
 
 
 

@@ -37,9 +37,14 @@ class Participants:
 
 class Rounds:
 
-    def __init__(self, round_nbr=0):
+    round_nbr = 0
+
+    def __init__(self):
         self.lst_match = []
-        self.round_nbr = round_nbr
+        self.round_nbr = Rounds.round_nbr
+        Rounds.round_nbr += 1
+        self.id_tournoi = -1
+
 
     def add_match(self, lst_matchs):
         self.lst_match.append(lst_matchs)
