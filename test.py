@@ -13,20 +13,20 @@ def create_tournament():
     place = view.get_place()
     date = str(datetime.now().date())
     turn = view.get_turn()
-    round = None
     player = add_player()
     type = view.get_type()
     description = view.get_description()
     table_tournoi = db.table("Tournament")
     table_tournoi.insert(
-        {'Name': name, 'Place': place, 'Date': date, 'Players': player, 'Round': round, 'Type': type, 'Description': description})
-    tournoi = Tournoi(name, place, date, turn, round, player, type, description)
+        {'Name': name, 'Place': place, 'Date': date, 'Players': player, 'Type': type, 'Description': description})
+    tournoi = Tournoi(name, place, date, turn, player, type, description)
+    print(tournoi.id)
     return tournoi
 
 
 players = []
 hist = []
-round = []
+lst_round = []
 
 
 def add_player():
@@ -67,10 +67,6 @@ def get_round():
         Matches(first_half[3].nom, first_half[3].id, second_half[3].nom, second_half[3].id, None)
     ]
     hist.append(first_round)
-    table_tournoi = db.table("Tournament")
-    round = Rounds()
-    table_tournoi.update({"Round": {"Name": "Round" + str(round.round_nbr), "Start": str(datetime.now()),
-                                    "Games": str(first_round), "End": None }})
     return first_round
 
 
@@ -93,10 +89,12 @@ def get_results(lst_match):
 
 def rst_pts():
     result = get_results(hist)
-    round = Rounds()
+    lst_round.append(result)
+    b = Rounds()
     table_tournoi = db.table("Tournament")
-    table_tournoi.update({"Round": {"Name": "Round" + str(round.round_nbr),
-                                    "Games": str(result), "End": str(datetime.now()) }})
+    table_rounds = db.table("Rounds")
+    table_rounds.insert({"Tournoi_id": len(table_tournoi), "Name": "Round" + " " + str(b.round_nbr),
+                                    "Games": str(lst_round), "End": str(datetime.now())})
     for lst in result:
         for match in lst:
             rs = None
@@ -137,27 +135,13 @@ def new_round():
                 round[2].nom_blanc = tmp_nom
             else:
                 return round
-    table_tournoi = db.table("Tournament")
-    round = Rounds()
-    table_tournoi.update({"Round": {"Name": "Round" + str(round.round_nbr), "Start": str(datetime.now()),
-                                    "Games": str(round), "End": None}})
     return round
-
-
-#def lst():
-    #Rounds(1, lst de match avec resultat, debut, fin)
-
-def update_rounds():
-    round = Rounds()
-    table_tournoi = db.table("Tournament")
-    table_tournoi.update({"Round": {"Name": "Round " + str(round.round_nbr)}})
-    table_tournoi.update({"Round": {"Start": str(datetime.now())}})
-    table_tournoi.insert({"Round": {"end": str(datetime.now())}})
 
 
 
 def fonctionnement():
-    db.drop_table("Tournament")
+    #db.drop_table("Tournament")
+    #db.drop_table("Rounds")
     create_tournament()
     get_round()
     rst_pts()
@@ -166,6 +150,26 @@ def fonctionnement():
     rst_pts()
     new_round()
     rst_pts()
+
+def charger():
+    a = input("Nom du Tournoi? ")#Chercher le nom d'un tournoi
+    b = Query()
+    table_tournoi = db.table("Tournament")#Trouver le tournoi correspondant
+    print(table_tournoi.get(b.Name == a))
+    #Regrouper le doc ID avec le Tournoi ID des rounds
+    #Ajouter les Joueurs dans liste joueur
+    #Ajouter les matchs dans liste de match
+    #recalculer les points de chaque joueur avec les matchs
+
+
+charger()
+
+
+def change_name():
+    table_players = db.table("Players")
+    player = Query()
+    a = table_players.get(player.Name == input())
+    table_players.update(add(a["Name"], str(input())))
 
 
 
@@ -213,7 +217,7 @@ def change_rank():
         print(a['Rank'])
         new_rank = view.get_rank()
         a["Rank"] = new_rank
-        r.update(a)
+        r.update({a["Rank"]: new_rank})
         return a['Rank']
 
 

@@ -1,17 +1,16 @@
 class Tournoi:
-
     id = 0
 
-    def __init__(self, name, place, date, turn, round, player, type, description):
+    def __init__(self, name, place, date, turn, player, type, description):
         self.nom = name
         self.lieu = place
         self.date = date
         self.tour = turn
-        self.round = round
         self.player = player
         self.type = type
         self.description = description
         self.hist = []
+        self.id = Tournoi.id
         Tournoi.id += 1
 
 
@@ -36,15 +35,14 @@ class Participants:
 
 
 class Rounds:
-
-    round_nbr = 0
+    round_nbr = 1
 
     def __init__(self):
         self.lst_match = []
         self.round_nbr = Rounds.round_nbr
         Rounds.round_nbr += 1
-        self.id_tournoi = -1
-
+        self.id_tournoi = Tournoi.id
+        Tournoi.id += 1
 
     def add_match(self, lst_matchs):
         self.lst_match.append(lst_matchs)
@@ -52,7 +50,7 @@ class Rounds:
 
 class Matches:
 
-    def __init__(self, nom_blanc, id_blanc,  nom_noir, id_noir, result):
+    def __init__(self, nom_blanc, id_blanc, nom_noir, id_noir, result):
         self.nom_blanc = nom_blanc
         self.id_blanc = id_blanc
         self.nom_noir = nom_noir
@@ -61,4 +59,3 @@ class Matches:
 
     def __repr__(self):
         return '{} ({}) VS {} ({}) : {}'.format(self.nom_blanc, self.id_blanc, self.nom_noir, self.id_noir, self.result)
-
