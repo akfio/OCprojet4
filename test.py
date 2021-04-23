@@ -18,9 +18,8 @@ def create_tournament():
     description = view.get_description()
     table_tournoi = db.table("Tournament")
     table_tournoi.insert(
-        {'Name': name, 'Place': place, 'Date': date, 'Players': player, 'Type': type, 'Description': description})
+        {'Name': name, 'Place': place, 'Date': date, 'Players': player, 'Type': type, 'Turn': turn, 'Description': description})
     tournoi = Tournoi(name, place, date, turn, player, type, description)
-    print(tournoi.id)
     return tournoi
 
 
@@ -29,9 +28,11 @@ hist = []
 lst_round = []
 
 
+
 def add_player():
+    player_serialized = dict()
     for pyr in range(8):
-        name = input('Nom du joueur? : ')
+        name = input('Nom du joueur? : ').capitalize()
         r = db.table("Players")
         player = Query()
         a = r.get(player.Name == name)
@@ -41,7 +42,14 @@ def add_player():
         else:
             p = Participants(a["Name"], a["First_name"], a["Birth_date"], a["Sexe"], a["Rank"])
             players.append(p)
-    return str(players)
+            in_add = dict()
+            in_add["Name"] = p.nom
+            in_add["First_name"] = p.prenom
+            in_add["Birth_date"] = p.age
+            in_add["Sexe"] = p.sexe
+            in_add["Rank"] = p.classement
+            player_serialized[str(len(player_serialized))] = in_add
+    return player_serialized
 
 
 def create_player():
@@ -87,14 +95,29 @@ def get_results(lst_match):
     return lst_match
 
 
+def games(lst_round):
+    round_serialized = dict()
+    for r in lst_round:
+        for round in r:
+            for match in round:
+                to_add = dict()
+                to_add["blanc"] = match.nom_blanc
+                to_add["blanc_id"] = match.id_blanc
+                to_add["noir"] = match.nom_noir
+                to_add["noir_id"] = match.id_noir
+                to_add["result"] = match.result
+                round_serialized[str(len(round_serialized))] = to_add  # round_serialized[0]["blanc"] -> nom1
+    return round_serialized
+
 def rst_pts():
     result = get_results(hist)
+    lst_round.clear()
     lst_round.append(result)
     b = Rounds()
     table_tournoi = db.table("Tournament")
     table_rounds = db.table("Rounds")
     table_rounds.insert({"Tournoi_id": len(table_tournoi), "Name": "Round" + " " + str(b.round_nbr),
-                                    "Games": str(lst_round), "End": str(datetime.now())})
+                                    "Games": games(lst_round), "End": str(datetime.now())})
     for lst in result:
         for match in lst:
             rs = None
@@ -137,39 +160,70 @@ def new_round():
                 return round
     return round
 
+def testname(): #IDTOURNOI
+    table_tournoi = db.table("Tournament")
+    name = input("name? ")
+    data = table_tournoi.all()
+    i = 0
+    while i < len(data):
+        print(data[i])
+        if data[i]["Name"] == name:
+            break
+        i += 1
+    return i+1
+
+
 
 
 def fonctionnement():
-    #db.drop_table("Tournament")
-    #db.drop_table("Rounds")
-    create_tournament()
-    get_round()
-    rst_pts()
-#RECHARGER TOUTES LES DONN2ES/ RECALCULER TT LES POINTS DES JOUEURS DANS UN TOURNOI
-    new_round()
-    rst_pts()
-    new_round()
-    rst_pts()
+    db.drop_table("Tournament")
+    db.drop_table("Rounds")
+
 
 def charger():
-    a = input("Nom du Tournoi? ")#Chercher le nom d'un tournoi
+    # Chercher le nom d'un tournoi
+    a = input("Nom du Tournoi? ").capitalize()
+    # Trouver le tournoi correspondant
     b = Query()
-    table_tournoi = db.table("Tournament")#Trouver le tournoi correspondant
-    print(table_tournoi.get(b.Name == a))
-    #Regrouper le doc ID avec le Tournoi ID des rounds
-    #Ajouter les Joueurs dans liste joueur
-    #Ajouter les matchs dans liste de match
-    #recalculer les points de chaque joueur avec les matchs
-
-
-charger()
-
-
-def change_name():
-    table_players = db.table("Players")
-    player = Query()
-    a = table_players.get(player.Name == input())
-    table_players.update(add(a["Name"], str(input())))
+    table_tournoi = db.table("Tournament")
+    c = table_tournoi.get(b.Name == a)
+    #Ajouter les joueurs à la list players
+    d = c["Players"]
+    for i in d:
+        p = Participants(d[i]["Name"], d[i]["First_name"], d[i]["Birth_date"], d[i]["Sexe"], d[i]["Rank"])
+        players.append(p)
+    # Regrouper le doc ID avec le Tournoi ID des rounds
+    id = c.doc_id
+    table_round = db.table("Rounds")
+    e = table_round.count(b.Tournoi_id == id)
+    # Ajouter les matchs dans list de round
+    f = 0
+    for doc in range(e):
+        f += 1
+        i = table_round.get((b.Tournoi_id == id) & (b.Name == "Round " + str(f)))
+        j = i["Games"]
+        for k in j:
+            l = Matches(j[k]["blanc"], j[k]["blanc_id"], j[k]["noir"], j[k]["noir_id"], j[k]["result"])
+            lst_round.append(l)
+    #Recalculer le nombre de points
+    for match in lst_round:
+        rs = None
+        if match.result == "Victoire" + " " + match.nom_blanc:
+            rs = match.id_blanc
+        elif match.result == "Victoire" + " " + match.nom_noir:
+            rs = match.id_noir
+        all = len(players)
+        for i in range(all):
+            if players[i].id == rs:
+                players[i].pts += 1
+        if match.result == "Match nul":
+            players[match.id_blanc].pts += 0.5
+            players[match.id_noir].pts += 0.5
+    #Continuer le tournoi
+    z = c["Turn"]
+    for g in range(z-e):
+        new_round()
+        rst_pts()
 
 
 
@@ -189,6 +243,54 @@ def rapport_acteurs():
     else:
         print("Veuillez saisir 1 ou 2")
         return rapport_acteurs()
+
+def pyrs_in_tnmt():
+    table_tournoi = db.table("Tournament")
+    a = Query()
+    b = input("nom du tournoi? ").capitalize()
+    c = table_tournoi.get(a.Name == b)
+    d = c["Players"]
+    lst = []
+    for i in d:
+        p = Participants(d[i]["Name"], d[i]["First_name"], d[i]["Birth_date"], d[i]["Sexe"], d[i]["Rank"])
+        lst.append(p)
+    e = input("""
+                    Rapport des joueurs par ordre:
+
+                  1 : Alphabetique 
+                  2 : Classement
+
+                    """)
+    if int(e) == 2:
+        return sorted(lst, key=lambda a: a.classement)
+    elif int(e) == 1:
+        return sorted(lst, key=lambda a: a.nom)
+    else:
+        print("Veuillez saisir 1 ou 2")
+        return pyrs_in_tnmt()
+
+
+def all_tnmt():
+    table_tournoi = db.table("Tournament")
+    return table_tournoi.all()
+
+def all_turn_tnmt():
+    return
+
+def find_pyr():
+    table_players = db.table("Players")
+    a = Query()
+    b = input("nom du joueur? ").capitalize()
+    c = table_players.get(a.Name == b)
+    return c
+
+create_tournament()
+
+def change_name():
+    table_players = db.table("Players")
+    player = Query()
+    a = table_players.get(player.Name == input())
+    table_players.update(add(a["Name"], str(input())))
 
 
 def change_rank():
@@ -221,103 +323,6 @@ def change_rank():
         return a['Rank']
 
 
-
-"""
-joueur introuvable
-save en db les rounds
-
-
-
-def add_point(match):
-    rs = None
-    if match.result == "Victoire blanc":
-        rs = match.id_blanc
-    elif match.result == "Victoire noir":
-        rs = match.id_noir
-    all = len(player)
-    for i in range(all):
-        if player[i].id == rs:
-            player[i].pts += 1
-    if match.result == "Match nul":
-        player[match.id_blanc].pts += 0.5
-        player[match.id_noir].pts += 0.5
-    return player[match.id_blanc].pts, player[match.id_noir].pts
-
-
-b = view.get_result()
-if b == 1:
-    n.pts += 1
-elif b == 2:
-    n.pts += 1
-elif b == 0:
-    n.pts += 0.5
-    n.pts += 0.5
-return b
-
-
-
-def get_round(self):
-    a = itemgetter(4)
-    b = sorted(player, key=a)
-    c = len(b) // 2
-    first_half = b[:c]
-    second_half = b[c:]
-    first_round = [
-        
-    ]
-    self.first = first_round
-
-
-def get_ze_result(self):
-    if view.get_result() == 1:
-
-        
-        for _ in first_round:
-            result = view.get_result()
-            match.append(result)
-        return
-def add_points():
-# Ajouter resultat 1 à Joueur 1
-# Ajouter resultat 2 à joueur 2
-
-
-def get_new_round():
-    sorted()
-    return
-    
-    match1 = (first_half[0][5], second_half[0][5], view.get_result())
-    lst.append(match1)
-    match2 = (first_half[1][5], second_half[1][5], view.get_result())
-    lst.append(match2)
-    match3 = (first_half[2][5], second_half[2][5], view.get_result())
-    lst.append(match3)
-    match4 = (first_half[3][5], second_half[3][5], view.get_result())
-    lst.append(match4)
-    return lst
-    
-    
-def ze_result():
-    lst = []
-    match1 = (get_round_result()[0][0], get_round_result()[0][1], add_points())
-    lst.append(match1)
-    match2 = (get_round_result()[1][0], get_round_result()[1][1], add_points())
-    lst.append(match2)
-    match3 = (get_round_result()[2][0], get_round_result()[2][1], add_points())
-    lst.append(match3)
-    match4 = (get_round_result()[3][0], get_round_result()[3][1], add_points())
-    lst.append(match4)
-    return lst   
-    
-    
-    Participants("Brady", "Tom", "03/06/1960", "H", 2),
-    Participants("James", "LeBron", "03/06/1960", "H", 4),
-    Participants("Westbrook", "Russell", "03/06/1960", "H", 7),
-    Participants("Federer", "Roger", "03/06/1960", "H", 8),
-    Participants("Nadal", "Rapha", "03/06/1960", "H", 5),
-    Participants("Henry", "Titi", "03/06/1960", "H", 1),
-    Participants("Gignac", "André", "03/06/1960", "H", 6),
-    Participants("Obama", "Presi", "03/06/1960", "H", 3) 
-"""
 
 
 class Static:

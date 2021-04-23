@@ -8,7 +8,7 @@ class View:
     # Tournoi
     def get_name(self):
         try:
-            name = input('Nom du Tournoi? ')
+            name = input('Nom du Tournoi? ').capitalize()
             if len(name) > 20:
                 print('Nom du tournoi trop long')
                 return self.get_name()
@@ -18,7 +18,7 @@ class View:
 
     def get_place(self):
         try:
-            place = input('Lieu du tournoi? ')
+            place = input('Lieu du tournoi? ').capitalize()
             if len(place) > 20:
                 return self.get_place()
             return place
@@ -60,7 +60,7 @@ class View:
 
     def get_description(self):
         try:
-            description = input('description du tournoi: ')
+            description = input('description du tournoi: ').capitalize()
             if len(description) > 20:
                 return self.get_description()
             return description
@@ -70,7 +70,7 @@ class View:
     # Participants
     def get_pyr_name(self):
         try:
-            name = input('Nom du joueur? ')
+            name = input('Nom du joueur? ').capitalize()
             if len(name) > 20:
                 print('Nom trop long')
                 return self.get_pyr_name()
@@ -80,7 +80,7 @@ class View:
 
     def get_frt_name(self):
         try:
-            pname = input('Prenom du joueur? ')
+            pname = input('Prenom du joueur? ').capitalize()
             if len(pname) > 20:
                 print('Prenom trop long')
                 return self.get_frt_name()
@@ -102,7 +102,7 @@ class View:
 
     def get_sexe(self):
         try:
-            sexe = input('sexe du joueur: ''H/F ')
+            sexe = input('sexe du joueur: ''H/F ').capitalize()
             if len(sexe) != 1:
                 return self.get_sexe()
             return sexe
