@@ -18,7 +18,8 @@ def create_tournament():
     description = view.get_description()
     table_tournoi = db.table("Tournament")
     table_tournoi.insert(
-        {'Name': name, 'Place': place, 'Date': date, 'Players': player, 'Type': type, 'Turn': turn, 'Description': description})
+        {'Name': name, 'Place': place, 'Date': date, 'Players': player, 'Type': type, 'Turn': turn,
+         'Description': description})
     tournoi = Tournoi(name, place, date, turn, player, type, description)
     return tournoi
 
@@ -26,7 +27,7 @@ def create_tournament():
 players = []
 hist = []
 lst_round = []
-
+name = []
 
 
 def add_player():
@@ -109,6 +110,7 @@ def games(lst_round):
                 round_serialized[str(len(round_serialized))] = to_add  # round_serialized[0]["blanc"] -> nom1
     return round_serialized
 
+
 def rst_pts():
     result = get_results(hist)
     lst_round.clear()
@@ -117,7 +119,7 @@ def rst_pts():
     table_tournoi = db.table("Tournament")
     table_rounds = db.table("Rounds")
     table_rounds.insert({"Tournoi_id": len(table_tournoi), "Name": "Round" + " " + str(b.round_nbr),
-                                    "Games": games(lst_round), "End": str(datetime.now())})
+                         "Games": games(lst_round), "End": str(datetime.now())})
     for lst in result:
         for match in lst:
             rs = None
@@ -160,7 +162,8 @@ def new_round():
                 return round
     return round
 
-def testname(): #IDTOURNOI
+
+def testname():  # IDTOURNOI
     table_tournoi = db.table("Tournament")
     name = input("name? ")
     data = table_tournoi.all()
@@ -170,14 +173,15 @@ def testname(): #IDTOURNOI
         if data[i]["Name"] == name:
             break
         i += 1
-    return i+1
-
-
+    return i + 1
 
 
 def fonctionnement():
-    db.drop_table("Tournament")
-    db.drop_table("Rounds")
+    #db.drop_table("Tournament")
+    #db.drop_table("Rounds")
+    create_tournament()
+    get_round()
+    rst_pts()
 
 
 def charger():
@@ -187,7 +191,7 @@ def charger():
     b = Query()
     table_tournoi = db.table("Tournament")
     c = table_tournoi.get(b.Name == a)
-    #Ajouter les joueurs à la list players
+    # Ajouter les joueurs à la list players
     d = c["Players"]
     for i in d:
         p = Participants(d[i]["Name"], d[i]["First_name"], d[i]["Birth_date"], d[i]["Sexe"], d[i]["Rank"])
@@ -205,7 +209,7 @@ def charger():
         for k in j:
             l = Matches(j[k]["blanc"], j[k]["blanc_id"], j[k]["noir"], j[k]["noir_id"], j[k]["result"])
             lst_round.append(l)
-    #Recalculer le nombre de points
+    # Recalculer le nombre de points
     for match in lst_round:
         rs = None
         if match.result == "Victoire" + " " + match.nom_blanc:
@@ -219,13 +223,21 @@ def charger():
         if match.result == "Match nul":
             players[match.id_blanc].pts += 0.5
             players[match.id_noir].pts += 0.5
-    #Continuer le tournoi
+    # Continuer le tournoi
     z = c["Turn"]
-    for g in range(z-e):
-        new_round()
+    if e == 0:
+        e += 1
+        get_round()
         rst_pts()
+        for g in range(z - e):
+            new_round()
+            rst_pts()
+    else:
+        for g in range(z - e):
+            new_round()
+            rst_pts()
 
-
+charger()
 
 def rapport_acteurs():
     table_players = db.table("Players")
@@ -243,6 +255,7 @@ def rapport_acteurs():
     else:
         print("Veuillez saisir 1 ou 2")
         return rapport_acteurs()
+
 
 def pyrs_in_tnmt():
     table_tournoi = db.table("Tournament")
@@ -274,8 +287,42 @@ def all_tnmt():
     table_tournoi = db.table("Tournament")
     return table_tournoi.all()
 
+
 def all_turn_tnmt():
-    return
+    table_round = db.table("Rounds")
+    table_tournoi = db.table("Tournament")
+    a = input("Nom du tournoi? ")
+    b = Query()
+    c = table_tournoi.get(b.Name == a)
+    d = c.doc_id
+    e = table_round.count(b.Tournoi_id == d)
+    f = 0
+    lst_rnd = []
+    for doc in range(e):
+        f += 1
+        i = table_round.get(b.Tournoi_id == d)
+        lst_rnd.append(i)
+    return lst_rnd
+
+
+def all_games_tnmt():
+    a = input("Nom du Tournoi? ").capitalize()
+    b = Query()
+    table_tournoi = db.table("Tournament")
+    c = table_tournoi.get(b.Name == a)
+    id = c.doc_id
+    table_round = db.table("Rounds")
+    e = table_round.count(b.Tournoi_id == id)
+    f = 0
+    lst = []
+    for doc in range(e):
+        f += 1
+        i = table_round.get((b.Tournoi_id == id) & (b.Name == "Round " + str(f)))
+        lst.append(i["Games"])
+    return lst
+
+
+
 
 def find_pyr():
     table_players = db.table("Players")
@@ -284,7 +331,6 @@ def find_pyr():
     c = table_players.get(a.Name == b)
     return c
 
-create_tournament()
 
 def change_name():
     table_players = db.table("Players")
@@ -323,14 +369,14 @@ def change_rank():
         return a['Rank']
 
 
-
-
+"""
 class Static:
     variable = 4
-
-
+    
+    
 a = Static()
 # print(a.variable) 4
 a.variable = 5
 # print(a.variable) 5
 # print(Static.variable) 4
+"""

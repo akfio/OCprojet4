@@ -34,7 +34,6 @@ class View:
         print('nombre de tours = ' + str(turn))
         return turn
 
-
     def get_type(self):
         try:
             print('Taper 1 pour Bullet')
@@ -119,11 +118,6 @@ class View:
         except ValueError:
             print('Entrer une valeur numérique')
             return self.get_rank()
-
-    # Rounds
-
-    def get_lst_match(self):
-        return
 
     # Matches
     def get_result(self):

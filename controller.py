@@ -10,25 +10,27 @@ from datetime import datetime
 class Controller:
     def __init__(self):
         self.view = View()
+        self.round = Rounds()
         self.tournoi = None
         self.participants = []
         self.matches = None
         self.hist = []
+        self.lst_round = []
         self.db = TinyDB('Tournoi.json')
 
     def create_tournament(self):
         name = self.view.get_name()
         place = self.view.get_place()
-        date = datetime.now().date()
+        date = str(datetime.now().date())
         turn = self.view.get_turn()
-        # round
         player = self.add_player()
         type = self.view.get_type()
         description = self.view.get_description()
         table_tournoi = self.db.table("Tournament")
         table_tournoi.insert(
-            {'Name': name, 'Place': place, 'Date': date, 'Players': player, 'Type': type, 'Description': description})
-        self.tournoi = Tournoi(name, place, date, turn, None, player, type, description)
+            {'Name': name, 'Place': place, 'Date': date, 'Players': player, 'Type': type, 'Turn': turn,
+             'Description': description})
+        self.tournoi = Tournoi(name, place, date, turn, player, type, description)
         # self.hist = self.tournoi.hist
 
     def create_player(self):
@@ -37,11 +39,11 @@ class Controller:
         birth = self.view.get_birth_date()
         sexe = self.view.get_sexe()
         classement = self.view.get_rank()
-        # self.participants.append(Participants(nom, prenom, birth, sexe, classement))
         table_players = self.db.table("Players")
         table_players.insert({'Name': nom, 'First_name': prenom, 'Birth_date': birth, 'Sexe': sexe, 'Rank': classement})
 
     def add_player(self):
+        player_serialized = dict()
         for pyr in range(8):
             name = input('Nom du joueur? : ')
             r = self.db.table("Players")
@@ -53,7 +55,14 @@ class Controller:
             else:
                 p = Participants(a["Name"], a["First_name"], a["Birth_date"], a["Sexe"], a["Rank"])
                 self.participants.append(p)
-        return self.participants
+                in_add = dict()
+                in_add["Name"] = p.nom
+                in_add["First_name"] = p.prenom
+                in_add["Birth_date"] = p.age
+                in_add["Sexe"] = p.sexe
+                in_add["Rank"] = p.classement
+                player_serialized[str(len(player_serialized))] = in_add
+        return player_serialized
 
     def choose_action(self):
         while 1:
@@ -80,12 +89,11 @@ class Controller:
         return first_round
 
     def get_results(self):
-        view = View()
         for lst in self.hist:
             for match in lst:
                 print("")
                 print(match)
-                result = view.get_result()
+                result = self.view.get_result()
                 if int(result) == 1:
                     match.result = "Victoire" + " " + match.nom_blanc
                 elif int(result) == 2:
@@ -95,8 +103,28 @@ class Controller:
                 print(match)
         return self.hist
 
+    def games(self):
+        round_serialized = dict()
+        for r in self.lst_round:
+            for round in r:
+                for match in round:
+                    to_add = dict()
+                    to_add["blanc"] = match.nom_blanc
+                    to_add["blanc_id"] = match.id_blanc
+                    to_add["noir"] = match.nom_noir
+                    to_add["noir_id"] = match.id_noir
+                    to_add["result"] = match.result
+                    round_serialized[str(len(round_serialized))] = to_add
+        return round_serialized
+
     def rst_pts(self):
         result = self.get_results()
+        self.lst_round.clear()
+        self.lst_round.append(result)
+        table_tournoi = self.db.table("Tournament")
+        table_rounds = self.db.table("Rounds")
+        table_rounds.insert({"Tournoi_id": len(table_tournoi), "Name": "Round" + " " + str(self.round.round_nbr),
+                             "Games": self.games(), "End": str(datetime.now())})
         for lst in result:
             for match in lst:
                 rs = None
@@ -137,12 +165,8 @@ class Controller:
                     return round
         return round
 
-    def fonct(self):
-        self.get_round()
-        self.get_results()
-        self.rst_pts()
-        self.new_round()
+
 
 
 a = Controller()
-a.fonct()
+
