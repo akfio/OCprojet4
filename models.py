@@ -1,5 +1,4 @@
 class Tournoi:
-    id = 0
 
     def __init__(self, name, place, date, turn, player, type, description):
         self.nom = name
@@ -10,8 +9,6 @@ class Tournoi:
         self.type = type
         self.description = description
         self.hist = []
-        self.id = Tournoi.id
-        Tournoi.id += 1
 
 
 class Participants:
@@ -38,14 +35,8 @@ class Rounds:
     round_nbr = 1
 
     def __init__(self):
-        self.lst_match = []
         self.round_nbr = Rounds.round_nbr
         Rounds.round_nbr += 1
-        self.id_tournoi = Tournoi.id
-        Tournoi.id += 1
-
-    def add_match(self, lst_matchs):
-        self.lst_match.append(lst_matchs)
 
 
 class Matches:

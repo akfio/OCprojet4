@@ -135,13 +135,59 @@ class View:
             return self.get_result()
         return result
 
+    # INPUT
+
+    def name_tournoi(self):
+        a = input("Nom du tournoi? ").capitalize()
+        return a
+
+    def name_player(self):
+        a = input("Nom du joueur? ").capitalize()
+        return a
+
+    def input_acteurs(self):
+        name = input("""
+                    Rapport des acteurs par ordre:
+
+                  1 : Alphabetique 
+                  2 : Classement
+
+                    """)
+        return name
+
+    def input_pyrs(self):
+        menu = input("""
+                                Rapport des joueurs par ordre:
+
+                              1 : Alphabetique 
+                              2 : Classement
+
+                                """)
+        return menu
+
+    def input_rapports(self):
+        menu = input("""
+                                Choisir le rapport a afficher:
+
+                              1 : Liste de tous les acteurs 
+                              2 : Liste de tous les joueurs d'un tournoi
+                              3 : Liste de tous les tournoi
+                              4 : Liste de tous les tours d'un tournoi
+                              5 : Liste de tous les matchs d'un tournoi
+
+                                """)
+        return menu
+
     # MENU
 
     def choose_menu(self):
         print("""
             Menu du Tournoi: 
-              1 : Création de tournoi
-              2 : Création de participants
+              1 : Création d'un tournoi
+              2 : Chargement d'un tournoi
+              3 : Création d'un participant
+              4 : Modifier le classement d'un participant
+              5 : Afficher un rapport 
               """)
         a = input("choisir une action: ")
         return a

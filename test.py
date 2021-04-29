@@ -6,10 +6,16 @@ from datetime import datetime
 
 db = TinyDB('test.json')
 
+players = []
+hist = []
+lst_round = []
+t_name = []
+
 
 def create_tournament():
     view = View()
     name = view.get_name()
+    t_name.append(name)
     place = view.get_place()
     date = str(datetime.now().date())
     turn = view.get_turn()
@@ -22,12 +28,6 @@ def create_tournament():
          'Description': description})
     tournoi = Tournoi(name, place, date, turn, player, type, description)
     return tournoi
-
-
-players = []
-hist = []
-lst_round = []
-name = []
 
 
 def add_player():
@@ -111,15 +111,10 @@ def games(lst_round):
     return round_serialized
 
 
-def rst_pts():
+def set_pts():
     result = get_results(hist)
     lst_round.clear()
     lst_round.append(result)
-    b = Rounds()
-    table_tournoi = db.table("Tournament")
-    table_rounds = db.table("Rounds")
-    table_rounds.insert({"Tournoi_id": len(table_tournoi), "Name": "Round" + " " + str(b.round_nbr),
-                         "Games": games(lst_round), "End": str(datetime.now())})
     for lst in result:
         for match in lst:
             rs = None
@@ -134,9 +129,36 @@ def rst_pts():
             if match.result == "Match nul":
                 players[match.id_blanc].pts += 0.5
                 players[match.id_noir].pts += 0.5
+    rst_pts()
     return players[0].pts, players[1].pts, players[2].pts, players[3].pts, players[4].pts, players[5].pts, players[
         6].pts, \
            players[7].pts
+
+def charge_pts():
+    result = get_results(hist)
+    lst_round.clear()
+    lst_round.append(result)
+    for lst in result:
+        for match in lst:
+            rs = None
+            if match.result == "Victoire" + " " + match.nom_blanc:
+                rs = match.id_blanc
+            elif match.result == "Victoire" + " " + match.nom_noir:
+                rs = match.id_noir
+            all = len(players)
+            for i in range(all):
+                if players[i].id == rs:
+                    players[i].pts += 1
+            if match.result == "Match nul":
+                players[match.id_blanc].pts += 0.5
+                players[match.id_noir].pts += 0.5
+
+
+def rst_pts():
+    b = Rounds()
+    table_rounds = db.table("Rounds")
+    table_rounds.insert({"Tournoi_id": get_id(), "Name": "Round" + " " + str(b.round_nbr),
+                         "Games": games(lst_round), "End": str(datetime.now())})
 
 
 def new_round():
@@ -163,30 +185,22 @@ def new_round():
     return round
 
 
-def testname():  # IDTOURNOI
+def get_id():
     table_tournoi = db.table("Tournament")
-    name = input("name? ")
+    name = t_name[0]
     data = table_tournoi.all()
     i = 0
     while i < len(data):
-        print(data[i])
         if data[i]["Name"] == name:
             break
         i += 1
     return i + 1
 
 
-def fonctionnement():
-    #db.drop_table("Tournament")
-    #db.drop_table("Rounds")
-    create_tournament()
-    get_round()
-    rst_pts()
-
-
 def charger():
     # Chercher le nom d'un tournoi
     a = input("Nom du Tournoi? ").capitalize()
+    t_name.append(a)
     # Trouver le tournoi correspondant
     b = Query()
     table_tournoi = db.table("Tournament")
@@ -228,17 +242,42 @@ def charger():
     if e == 0:
         e += 1
         get_round()
-        rst_pts()
+        set_pts()
         for g in range(z - e):
             new_round()
-            rst_pts()
+            set_pts()
     else:
         for g in range(z - e):
             new_round()
-            rst_pts()
+            charge_pts()
+            b = Rounds()
+            e = table_round.count(Query().Tournoi_id == id)
+            c = e + 1
+            b.round_nbr = c
+            table_rounds = db.table("Rounds")
+            table_rounds.insert({"Tournoi_id": get_id(), "Name": "Round" + " " + str(b.round_nbr),
+                                 "Games": games(lst_round), "End": str(datetime.now())})
 
-charger()
+def end_tournoi():
+    sort = sorted(players, key=lambda a: a.pts)
+    print(players[0].nom.pts)
+    return
 
+def fonctionnement():
+    #db.drop_table("Tournament")
+    db.drop_table("Rounds")
+    #create_tournament()
+    charger()
+    end_tournoi()
+    #get_round()
+    #set_pts()
+    #new_round()
+    #set_pts()
+    #db.drop_table("Players")
+    #for i in range(8):
+        #create_player()
+
+fonctionnement()
 def rapport_acteurs():
     table_players = db.table("Players")
     a = input("""
@@ -300,7 +339,7 @@ def all_turn_tnmt():
     lst_rnd = []
     for doc in range(e):
         f += 1
-        i = table_round.get(b.Tournoi_id == d)
+        i = table_round.get((b.Tournoi_id == d) & (b.Name == "Round" + " " + str(f)))
         lst_rnd.append(i)
     return lst_rnd
 
@@ -322,8 +361,6 @@ def all_games_tnmt():
     return lst
 
 
-
-
 def find_pyr():
     table_players = db.table("Players")
     a = Query()
@@ -335,38 +372,38 @@ def find_pyr():
 def change_name():
     table_players = db.table("Players")
     player = Query()
-    a = table_players.get(player.Name == input())
-    table_players.update(add(a["Name"], str(input())))
+    a = table_players.get(player.Name == input("nom? "))
+    b = str(input("new name: "))
+    table_players.update({"Name": b}, Query().Name == a["Name"])
 
 
 def change_rank():
     view = View()
-    name = input('Nom du joueur? : ')
-    r = db.table("Players")
+    name = input('Nom du joueur? : ').capitalize()
+    table_players = db.table("Players")
     player = Query()
-    a = r.get(player.Name == name)
+    a = table_players.get(player.Name == name)
     if a is None:
         print("Joueur non présent dans la base de donnée")
         return change_rank()
-    elif r.count(player.Name == name) > 1:
-        first_name = input('Prénom du joueur? : ')
-        b = r.get((player.Name == name) & (player.First_name == first_name))
+    elif table_players.count(player.Name == name) > 1:
+        first_name = input('Prénom du joueur? : ').capitalize()
+        b = table_players.get((player.Name == name) & (player.First_name == first_name))
         if b is None:
             print("Prénom non présent dans la base de donnée")
             return change_rank()
         print("Classement actuel: ")
         print(b['Rank'])
         new_rank = view.get_rank()
-        b["Rank"] = new_rank
-        r.update(b)
+        table_players.update({"Rank": new_rank}, Query().Rank == b['Rank'])
         return b['Rank']
     else:
         print("Classement actuel: ")
         print(a['Rank'])
         new_rank = view.get_rank()
-        a["Rank"] = new_rank
-        r.update({a["Rank"]: new_rank})
+        table_players.update({"Rank": new_rank}, Query().Rank == a['Rank'])
         return a['Rank']
+
 
 
 """
