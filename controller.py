@@ -251,10 +251,16 @@ class Controller:
                 table_rounds = self.db.table("Rounds")
                 table_rounds.insert({"Tournoi_id": self.get_id(), "Name": "Round" + " " + str(b.round_nbr),
                                      "Games": self.games(), "End": str(datetime.now())})
+        self.end_tournoi()
+        return
 
     def end_tournoi(self):
-        sort = sorted(self.participants, key=lambda a: a.pts)
-        print(sort)
+        sort = sorted(self.participants, key=lambda a: a.pts, reverse=True)
+        i = 0
+        self.view.print_result()
+        for j in sort:
+            print(sort[i].nom, ", ", sort[i].prenom, ": ", sort[i].pts, "pts")
+            i += 1
         return
 
     def new_rank(self):

@@ -1,6 +1,5 @@
 from datetime import datetime
-from tinydb import TinyDB, Query
-from models import Matches, Participants
+
 
 
 
@@ -179,6 +178,18 @@ class View:
         return menu
 
     # MENU
+
+    def print_result(self):
+        print("""
+        
+                CLASSEMENT DE FIN DE TOURNOI:
+                
+        format : <Nom, Prenom : Pts>
+            
+            """)
+
+    def print(self):
+        print(self)
 
     def choose_menu(self):
         print("""

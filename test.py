@@ -134,6 +134,7 @@ def set_pts():
         6].pts, \
            players[7].pts
 
+
 def charge_pts():
     result = get_results(hist)
     lst_round.clear()
@@ -258,26 +259,36 @@ def charger():
             table_rounds.insert({"Tournoi_id": get_id(), "Name": "Round" + " " + str(b.round_nbr),
                                  "Games": games(lst_round), "End": str(datetime.now())})
 
+
 def end_tournoi():
-    sort = sorted(players, key=lambda a: a.pts)
-    print(players[0].nom.pts)
+    sort = sorted(players, key=lambda a: a.pts, reverse=True)
+    i = 0
+    a = View()
+    a.print_result()
+    for j in sort:
+        print(sort[i].nom, ", ", sort[i].prenom, ": ", sort[i].pts, "pts")
+        i += 1
     return
 
+
 def fonctionnement():
-    #db.drop_table("Tournament")
+    # db.drop_table("Tournament")
     db.drop_table("Rounds")
-    #create_tournament()
+    # create_tournament()
     charger()
     end_tournoi()
-    #get_round()
-    #set_pts()
-    #new_round()
-    #set_pts()
-    #db.drop_table("Players")
-    #for i in range(8):
-        #create_player()
+    # get_round()
+    # set_pts()
+    # new_round()
+    # set_pts()
+    # db.drop_table("Players")
+    # for i in range(8):
+    # create_player()
+
 
 fonctionnement()
+
+
 def rapport_acteurs():
     table_players = db.table("Players")
     a = input("""
@@ -403,7 +414,6 @@ def change_rank():
         new_rank = view.get_rank()
         table_players.update({"Rank": new_rank}, Query().Rank == a['Rank'])
         return a['Rank']
-
 
 
 """
