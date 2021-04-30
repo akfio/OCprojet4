@@ -1,7 +1,7 @@
 Programme pour un tournoi d’echec
-.......................................
+----------------------------------------------------------------------------------------------
 
-##Installation
+## Installation
 
 Tout d'abord, créez un dossier via la commande mkdir (ici projet4) dans lequel se trouvera l'environnement virtuel et l'ensemble des données extraites. Puis y accéder via la commande cd.
 
@@ -29,7 +29,7 @@ Importer les packages nécessaire avec la commande :
 pip install -r requirements.txt
 ``` 
 
-##Résultat
+## Résultat
 
 Vous pouvez désormais lancer le programme via la commande suivante: 
 
@@ -44,7 +44,7 @@ flake8 --format=html --htmldir=flake8-report
 Un dossier flack8-report sera généré.
 ```
 
-##Utilisation
+## Utilisation
 
 Tout d’abord, commencer par créer les joueurs qui seront sauvegardé par le programme via un fichier «Tournoi.json»
 Ensuite créer le tournoi avec les différentes informations :
