@@ -4,7 +4,7 @@ from models import Rounds
 from models import Matches
 from view import View
 from tinydb import TinyDB, Query
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class Controller:
@@ -41,7 +41,8 @@ class Controller:
         sexe = self.view.get_sexe()
         classement = self.view.get_rank()
         table_players = self.db.table("Players")
-        table_players.insert({'Name': nom, 'First_name': prenom, 'Birth_date': birth, 'Sexe': sexe, 'Rank': classement})
+        table_players.insert({'Name': nom, 'First_name': prenom, 'Birth_date': birth,
+                              'Sexe': sexe, 'Rank': classement})
 
     def add_player(self):
         player_serialized = dict()
@@ -122,7 +123,8 @@ class Controller:
     def round_db(self):
         table_rounds = self.db.table("Rounds")
         table_rounds.insert({"Tournoi_id": self.get_id(), "Name": "Round" + " " + str(self.round.round_nbr),
-                             "Games": self.games(), "End": str(datetime.now())})
+                             "Games": self.games(), "Start": str(datetime.now()),
+                             "End": str(datetime.now() + timedelta(minutes=45))})
         return
 
     def set_pts(self):
@@ -144,8 +146,7 @@ class Controller:
                     self.participants[match.id_blanc].pts += 0.5
                     self.participants[match.id_noir].pts += 0.5
         self.round_db()
-        return self.participants[0].pts, self.participants[1].pts, self.participants[2].pts, self.participants[3].pts, \
-               self.participants[4].pts, self.participants[5].pts, self.participants[6].pts, self.participants[7].pts
+        return
 
     def charge_pts(self):
         result = self.get_results()
@@ -165,8 +166,7 @@ class Controller:
                 if match.result == "Match nul":
                     self.participants[match.id_blanc].pts += 0.5
                     self.participants[match.id_noir].pts += 0.5
-        return self.participants[0].pts, self.participants[1].pts, self.participants[2].pts, self.participants[3].pts, \
-               self.participants[4].pts, self.participants[5].pts, self.participants[6].pts, self.participants[7].pts
+        return
 
     def new_round(self):
         b = sorted(self.participants, key=lambda a: (a.pts, a.classement))
@@ -215,8 +215,8 @@ class Controller:
             i = table_round.get((b.Tournoi_id == id) & (b.Name == "Round " + str(f)))
             j = i["Games"]
             for k in j:
-                l = Matches(j[k]["blanc"], j[k]["blanc_id"], j[k]["noir"], j[k]["noir_id"], j[k]["result"])
-                self.lst_round.append(l)
+                games = Matches(j[k]["blanc"], j[k]["blanc_id"], j[k]["noir"], j[k]["noir_id"], j[k]["result"])
+                self.lst_round.append(games)
         # Recalculer le nombre de points
         for match in self.lst_round:
             winner = None
@@ -249,8 +249,9 @@ class Controller:
                 total = count + 1
                 b.round_nbr = total
                 table_rounds = self.db.table("Rounds")
-                table_rounds.insert({"Tournoi_id": self.get_id(), "Name": "Round" + " " + str(b.round_nbr),
-                                     "Games": self.games(), "End": str(datetime.now())})
+                table_rounds.insert({"Tournoi_id": self.get_id(), "Name": "Round" + " " + str(self.round.round_nbr),
+                                     "Games": self.games(), "Start": str(datetime.now()),
+                                     "End": str(datetime.now() + timedelta(minutes=45))})
         self.end_tournoi()
         return
 
@@ -373,7 +374,6 @@ class Controller:
                 print("Commande indisponible")
                 return self.all_rapports()
 
-
     def choose_action(self):
         while 1:
             action = self.view.choose_menu()
@@ -391,6 +391,7 @@ class Controller:
                 print("Commande indisponible")
                 return self.view.choose_menu()
 
-a = Controller()
-a.choose_action()
 
+a = Controller()
+
+a.choose_action()

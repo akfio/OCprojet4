@@ -1,8 +1,6 @@
 from datetime import datetime
 
 
-
-
 class View:
     # Tournoi
     def get_name(self):
@@ -148,7 +146,7 @@ class View:
         name = input("""
                     Rapport des acteurs par ordre:
 
-                  1 : Alphabetique 
+                  1 : Alphabetique
                   2 : Classement
 
                     """)
@@ -158,7 +156,7 @@ class View:
         menu = input("""
                                 Rapport des joueurs par ordre:
 
-                              1 : Alphabetique 
+                              1 : Alphabetique
                               2 : Classement
 
                                 """)
@@ -168,7 +166,7 @@ class View:
         menu = input("""
                                 Choisir le rapport a afficher:
 
-                              1 : Liste de tous les acteurs 
+                              1 : Liste de tous les acteurs
                               2 : Liste de tous les joueurs d'un tournoi
                               3 : Liste de tous les tournoi
                               4 : Liste de tous les tours d'un tournoi
@@ -181,27 +179,21 @@ class View:
 
     def print_result(self):
         print("""
-        
-                CLASSEMENT DE FIN DE TOURNOI:
-                
-        format : <Nom, Prenom : Pts>
-            
-            """)
 
-    def print(self):
-        print(self)
+                CLASSEMENT DE FIN DE TOURNOI:
+
+        format : <Nom, Prenom : Pts>
+
+            """)
 
     def choose_menu(self):
         print("""
-            Menu du Tournoi: 
+            Menu du Tournoi:
               1 : Création d'un tournoi
               2 : Chargement d'un tournoi
               3 : Création d'un participant
               4 : Modifier le classement d'un participant
-              5 : Afficher un rapport 
+              5 : Afficher un rapport
               """)
         a = input("choisir une action: ")
         return a
-
-
-
