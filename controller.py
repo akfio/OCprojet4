@@ -128,6 +128,7 @@ class Controller:
         return
 
     def set_pts(self):
+        print(self.hist)
         result = self.get_results()
         self.lst_round.clear()
         self.lst_round.append(result)
