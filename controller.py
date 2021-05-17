@@ -122,6 +122,9 @@ class Controller:
 
     def round_db(self):
         table_rounds = self.db.table("Rounds")
+        count = table_rounds.count(Query().Tournoi_id == self.get_id())
+        total = count + 1
+        self.round.round_nbr = total
         table_rounds.insert({"Tournoi_id": self.get_id(), "Name": "Round" + " " + str(self.round.round_nbr),
                              "Games": self.games(), "Start": str(datetime.now()),
                              "End": str(datetime.now() + timedelta(minutes=45))})
@@ -246,14 +249,12 @@ class Controller:
             for g in range(z - count):
                 self.new_round()
                 self.charge_pts()
-                b = Rounds()
                 count = table_round.count(Query().Tournoi_id == id)
                 total = count + 1
-                b.round_nbr = total
-                table_rounds = self.db.table("Rounds")
-                table_rounds.insert({"Tournoi_id": self.get_id(), "Name": "Round" + " " + str(self.round.round_nbr),
-                                     "Games": self.games(), "Start": str(datetime.now()),
-                                     "End": str(datetime.now() + timedelta(minutes=45))})
+                self.round.round_nbr = total
+                table_round.insert({"Tournoi_id": self.get_id(), "Name": "Round" + " " + str(self.round.round_nbr),
+                                    "Games": self.games(), "Start": str(datetime.now()),
+                                    "End": str(datetime.now() + timedelta(minutes=45))})
         self.end_tournoi()
         return
 
@@ -268,7 +269,7 @@ class Controller:
 
     def new_rank(self):
         view = View()
-        name = input('Nom du joueur? : ').capitalize()
+        name = view.name_player()
         table_players = self.db.table("Players")
         player = Query()
         a = table_players.get(player.Name == name)
@@ -297,9 +298,9 @@ class Controller:
         table_players = self.db.table("Players")
         name = self.view.input_acteurs()
         if int(name) == 2:
-            return sorted(table_players, key=lambda a: a['Rank'])
+            return print(sorted(table_players, key=lambda a: a['Rank']))
         elif int(name) == 1:
-            return sorted(table_players, key=lambda a: a['Name'])
+            return print(sorted(table_players, key=lambda a: a['Name']))
         else:
             print("Veuillez saisir 1 ou 2")
             return self.rapport_acteurs()
@@ -307,7 +308,7 @@ class Controller:
     def pyrs_in_tnmt(self):
         table_tournoi = self.db.table("Tournament")
         a = Query()
-        name = self.view.name_player()
+        name = self.view.name_tournoi()
         get = table_tournoi.get(a.Name == name)
         d = get["Players"]
         lst = []
@@ -316,16 +317,16 @@ class Controller:
             lst.append(p)
         menu = self.view.input_pyrs()
         if int(menu) == 2:
-            return sorted(lst, key=lambda a: a.classement)
+            return print(sorted(lst, key=lambda a: a.classement))
         elif int(menu) == 1:
-            return sorted(lst, key=lambda a: a.nom)
+            return print(sorted(lst, key=lambda a: a.nom))
         else:
             print("Veuillez saisir 1 ou 2")
             return self.pyrs_in_tnmt()
 
     def all_tnmt(self):
         table_tournoi = self.db.table("Tournament")
-        return table_tournoi.all()
+        return print(table_tournoi.all())
 
     def all_turn_tnmt(self):
         table_round = self.db.table("Rounds")
@@ -341,7 +342,7 @@ class Controller:
             round += 1
             i = table_round.get((b.Tournoi_id == d) & (b.Name == "Round" + " " + str(round)))
             lst_rnd.append(i)
-        return lst_rnd
+        return print(lst_rnd)
 
     def all_games_tnmt(self):
         name = self.view.name_tournoi()
@@ -357,7 +358,7 @@ class Controller:
             round += 1
             i = table_round.get((b.Tournoi_id == id) & (b.Name == "Round " + str(round)))
             lst.append(i["Games"])
-        return lst
+        return print(lst)
 
     def all_rapports(self):
         while 1:
@@ -377,6 +378,7 @@ class Controller:
                 return self.all_rapports()
 
     def choose_action(self):
+        self.db.drop_table("Rounds")
         while 1:
             action = self.view.choose_menu()
             if int(action) == 1:
@@ -391,7 +393,7 @@ class Controller:
                 return self.all_rapports()
             else:
                 print("Commande indisponible")
-                return self.view.choose_menu()
+                return self.choose_action()
 
 
 a = Controller()
