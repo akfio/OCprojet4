@@ -3,7 +3,7 @@ from models import Participants
 from models import Rounds
 from models import Matches
 from view import View
-from tinydb import TinyDB, Query
+from tinydb import TinyDB, Query, where
 from datetime import datetime, timedelta
 
 
@@ -49,8 +49,7 @@ class Controller:
         for pyr in range(8):
             name = self.view.name_player()
             table_players = self.db.table("Players")
-            player = Query()
-            a = table_players.get(player.Name == name)
+            a = table_players.get(where("Name") == name)
             if a is None:
                 print('Joueur non disponible dans la base de donnée')
                 return self.add_player()
@@ -203,7 +202,7 @@ class Controller:
         # Trouver le tournoi correspondant
         b = Query()
         table_tournoi = self.db.table("Tournament")
-        get_tournoi = table_tournoi.get(b.Name == name)
+        get_tournoi = table_tournoi.get(where("Name") == name)
         # Ajouter les joueurs à la list players
         d = get_tournoi["Players"]
         for i in d:
@@ -272,11 +271,11 @@ class Controller:
         name = view.name_player()
         table_players = self.db.table("Players")
         player = Query()
-        a = table_players.get(player.Name == name)
+        a = table_players.get(where("Name") == name)
         if a is None:
             print("Joueur non présent dans la base de donnée")
             return self.new_rank()
-        elif table_players.count(player.Name == name) > 1:
+        elif table_players.count(where("Name") == name) > 1:
             first_name = input('Prénom du joueur? : ').capitalize()
             b = table_players.get((player.Name == name) & (player.First_name == first_name))
             if b is None:
@@ -285,13 +284,13 @@ class Controller:
             print("Classement actuel: ")
             print(b['Rank'])
             new_rank = view.get_rank()
-            table_players.update({"Rank": new_rank}, Query().Rank == b['Rank'])
+            table_players.update({"Rank": new_rank}, where("Name") == name and where("First_name") == first_name)
             return b['Rank']
         else:
             print("Classement actuel: ")
             print(a['Rank'])
             new_rank = view.get_rank()
-            table_players.update({"Rank": new_rank}, Query().Rank == a['Rank'])
+            table_players.update({"Rank": new_rank}, where("Name") == name)
             return a['Rank']
 
     def rapport_acteurs(self):
@@ -307,9 +306,8 @@ class Controller:
 
     def pyrs_in_tnmt(self):
         table_tournoi = self.db.table("Tournament")
-        a = Query()
         name = self.view.name_tournoi()
-        get = table_tournoi.get(a.Name == name)
+        get = table_tournoi.get(where("Name") == name)
         d = get["Players"]
         lst = []
         for i in d:
@@ -333,7 +331,7 @@ class Controller:
         table_tournoi = self.db.table("Tournament")
         name = self.view.name_tournoi()
         b = Query()
-        get = table_tournoi.get(b.Name == name)
+        get = table_tournoi.get(where("Name") == name)
         d = get.doc_id
         count = table_round.count(b.Tournoi_id == d)
         round = 0
@@ -348,7 +346,7 @@ class Controller:
         name = self.view.name_tournoi()
         b = Query()
         table_tournoi = self.db.table("Tournament")
-        get = table_tournoi.get(b.Name == name)
+        get = table_tournoi.get(where("Name") == name)
         id = get.doc_id
         table_round = self.db.table("Rounds")
         count = table_round.count(b.Tournoi_id == id)
@@ -378,7 +376,6 @@ class Controller:
                 return self.all_rapports()
 
     def choose_action(self):
-        self.db.drop_table("Rounds")
         while 1:
             action = self.view.choose_menu()
             if int(action) == 1:
@@ -394,6 +391,14 @@ class Controller:
             else:
                 print("Commande indisponible")
                 return self.choose_action()
+
+    def test(self):
+        a = 1
+        b = self.db.table("Players")
+        if (b.count(Query().Rank == a)) > 0:
+            print("oui")
+        else:
+            print("non")
 
 
 a = Controller()
