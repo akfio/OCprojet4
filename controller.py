@@ -392,14 +392,6 @@ class Controller:
                 print("Commande indisponible")
                 return self.choose_action()
 
-    def test(self):
-        a = 1
-        b = self.db.table("Players")
-        if (b.count(Query().Rank == a)) > 0:
-            print("oui")
-        else:
-            print("non")
-
 
 a = Controller()
 
